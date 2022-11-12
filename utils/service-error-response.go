@@ -5,12 +5,12 @@ import "github.com/gabrielgaspar447/go-blog-api/constants"
 func GetServiceErrorResponse(err error) (int, string) {
 	switch errMsg := err.Error(); errMsg {
 	case constants.UserAlreadyExists:
-		return constants.Conflict, constants.UserAlreadyExists
+		return constants.HTTP_Conflict, constants.UserAlreadyExists
 	case constants.UserNotFound:
-		return constants.NotFound, constants.UserNotFound
+		return constants.HTTP_NotFound, constants.UserNotFound
 	case constants.InvalidPassword:
-		return constants.Unauthorized, constants.InvalidPassword
+		return constants.HTTP_Unauthorized, constants.InvalidPassword
 	default:
-		return constants.InternalServerError, constants.SomethingWentWrong
+		return constants.HTTP_InternalServerError, constants.SomethingWentWrong
 	}
 }

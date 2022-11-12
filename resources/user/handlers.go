@@ -13,7 +13,7 @@ func signupHandler(c *gin.Context) {
 	var input models.User
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(constants.BadRequest, gin.H{"error": utils.GetErrorResponse(err)})
+		c.JSON(constants.HTTP_BadRequest, gin.H{"error": utils.GetErrorResponse(err)})
 		return
 	}
 
@@ -25,14 +25,14 @@ func signupHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(constants.Created, gin.H{"data": token})
+	c.JSON(constants.HTTP_Created, gin.H{"data": token})
 }
 
 func loginHandler(c *gin.Context) {
 	var input models.LoginDTO
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(constants.InternalServerError, gin.H{"error": constants.SomethingWentWrong})
+		c.JSON(constants.HTTP_InternalServerError, gin.H{"error": constants.SomethingWentWrong})
 		return
 	}
 
@@ -44,7 +44,7 @@ func loginHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(constants.OK, gin.H{"data": token})
+	c.JSON(constants.HTTP_OK, gin.H{"data": token})
 }
 
 func listUsersHandler(c *gin.Context) {
@@ -58,7 +58,7 @@ func listUsersHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(constants.OK, gin.H{"data": users})
+	c.JSON(constants.HTTP_OK, gin.H{"data": users})
 }
 
 func getUserByIdHandler(c *gin.Context) {
@@ -67,7 +67,7 @@ func getUserByIdHandler(c *gin.Context) {
 
 	idAsUint, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
-		c.JSON(constants.BadRequest, gin.H{"error": constants.InvalidId})
+		c.JSON(constants.HTTP_BadRequest, gin.H{"error": constants.InvalidId})
 		return
 	}
 
@@ -79,5 +79,5 @@ func getUserByIdHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(constants.OK, gin.H{"data": user})
+	c.JSON(constants.HTTP_OK, gin.H{"data": user})
 }
