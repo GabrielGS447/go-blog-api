@@ -13,3 +13,8 @@ type User struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 	Posts       []Post    `json:"posts"`
 }
+
+type LoginDTO struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

@@ -36,3 +36,21 @@ func signupService(input *models.User) (string, error) {
 
 	return auth.SignJWT(input)
 }
+
+func loginService(input *models.LoginDTO) (string, error) {
+	user, err := repositories.UserFindByEmail(input.Email)
+	if err != nil {
+		return "", err
+	}
+
+	if user.ID == 0 {
+		return "", errors.New(constants.UserNotFound)
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
+	if err != nil {
+		return "", errors.New(constants.InvalidPassword)
+	}
+
+	return auth.SignJWT(&user)
+}
