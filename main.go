@@ -8,4 +8,5 @@ import (
 func main() {
 	config.LoadEnvs()
 	db.Connect(true)
+	config.StartServer()
 }
