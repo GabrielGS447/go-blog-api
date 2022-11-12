@@ -54,3 +54,7 @@ func loginService(input *models.LoginDTO) (string, error) {
 
 	return auth.SignJWT(&user)
 }
+
+func listUsersService(includePosts bool) ([]models.User, error) {
+	return repositories.UserList(includePosts)
+}

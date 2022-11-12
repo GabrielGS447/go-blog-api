@@ -14,3 +14,15 @@ func UserFindByEmail(email string) (models.User, error) {
 func UserCreate(input *models.User) error {
 	return db.DB.Create(input).Error
 }
+
+func UserList(includePosts bool) ([]models.User, error) {
+	var users []models.User
+
+	if includePosts {
+		err := db.DB.Omit("Password").Preload("Posts").Find(&users).Error
+		return users, err
+	}
+
+	err := db.DB.Omit("Password").Find(&users).Error
+	return users, err
+}

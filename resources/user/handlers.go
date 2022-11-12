@@ -57,3 +57,16 @@ func loginHandler(c *gin.Context) {
 
 	c.JSON(constants.OK, gin.H{"data": token})
 }
+
+func listUsersHandler(c *gin.Context) {
+	includePosts := c.Query("posts") == "true"
+
+	users, err := listUsersService(includePosts)
+
+	if err != nil {
+		c.JSON(constants.InternalServerError, gin.H{"error": constants.SomethingWentWrong})
+		return
+	}
+
+	c.JSON(constants.OK, gin.H{"data": users})
+}
