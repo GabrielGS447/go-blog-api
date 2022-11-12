@@ -26,3 +26,15 @@ func UserList(includePosts bool) ([]models.User, error) {
 	err := db.DB.Omit("Password").Find(&users).Error
 	return users, err
 }
+
+func UserFindById(id uint, includePosts bool) (models.User, error) {
+	var user models.User
+
+	if includePosts {
+		err := db.DB.Omit("Password").Preload("Posts").Find(&user, id).Error
+		return user, err
+	}
+
+	err := db.DB.Omit("Password").Find(&user, id).Error
+	return user, err
+}

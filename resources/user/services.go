@@ -58,3 +58,16 @@ func loginService(input *models.LoginDTO) (string, error) {
 func listUsersService(includePosts bool) ([]models.User, error) {
 	return repositories.UserList(includePosts)
 }
+
+func getUserByIdService(id uint, includePosts bool) (models.User, error) {
+	user, err := repositories.UserFindById(id, includePosts)
+	if err != nil {
+		return user, err
+	}
+
+	if user.ID == 0 {
+		return user, errors.New(constants.UserNotFound)
+	}
+
+	return user, nil
+}
