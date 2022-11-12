@@ -10,13 +10,13 @@ var usersSeed = []models.User{
 		ID:          1,
 		DisplayName: "John Doe",
 		Email:       "johndoe@go.com",
-		Password:    "123456",
+		Password:    "$2a$08$I/wJJtinKh5jEjZjRGsVUes2Jfo.ZFe4n0D7amPHkmONzX4dGuEHy", // "123456"
 	},
 	{
 		ID:          2,
 		DisplayName: "Jane Doe",
 		Email:       "janedoe@go.com",
-		Password:    "123456",
+		Password:    "$2a$08$I/wJJtinKh5jEjZjRGsVUes2Jfo.ZFe4n0D7amPHkmONzX4dGuEHy", // "123456"
 	},
 }
 
