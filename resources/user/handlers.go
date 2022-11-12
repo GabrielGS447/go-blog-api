@@ -15,7 +15,7 @@ func signupHandler(c *gin.Context) {
 		return
 	}
 
-	err := signupService(&input)
+	token, err := signupService(&input)
 
 	if err != nil {
 		switch errMsg := err.Error(); errMsg {
@@ -28,5 +28,5 @@ func signupHandler(c *gin.Context) {
 		}
 	}
 
-	c.JSON(constants.Created, gin.H{"data": input})
+	c.JSON(constants.Created, gin.H{"data": token})
 }
