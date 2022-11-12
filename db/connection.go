@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/gabrielgaspar447/go-blog-api/resources/post"
+	"github.com/gabrielgaspar447/go-blog-api/resources/user"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
 
-func Connect() {
+func Connect(reset bool) {
 	mysqlUser := os.Getenv("MYSQL_USER")
 	mysqlPass := os.Getenv("MYSQL_PASS")
 	mysqlHost := os.Getenv("MYSQL_HOST")
@@ -23,6 +25,18 @@ func Connect() {
 		panic("failed to connect database")
 	}
 
+	if reset {
+		resetDB(db)
+	} else {
+		db.AutoMigrate(&user.User{}, &post.Post{})
+	}
+
 	fmt.Println("Connection Opened to Database")
 	DB = db
+}
+
+func resetDB(db *gorm.DB) {
+	db.Migrator().DropTable(&user.User{}, &post.Post{})
+	db.AutoMigrate(&user.User{}, &post.Post{})
+	seed(db)
 }

@@ -7,5 +7,5 @@ import (
 
 func main() {
 	config.LoadEnvs()
-	db.Connect()
+	db.Connect(true)
 }
