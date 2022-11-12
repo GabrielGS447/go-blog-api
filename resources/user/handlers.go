@@ -18,14 +18,10 @@ func signupHandler(c *gin.Context) {
 	token, err := signupService(&input)
 
 	if err != nil {
-		switch errMsg := err.Error(); errMsg {
-		case constants.UserAlreadyExists:
-			c.JSON(constants.Conflict, gin.H{"error": constants.UserAlreadyExists})
-			return
-		default:
-			c.JSON(constants.InternalServerError, gin.H{"error": constants.SomethingWentWrong})
-			return
-		}
+		statusCode, msg := utils.GetServiceErrorResponse(err)
+		c.JSON(statusCode, gin.H{"error": msg})
+		return
+	}
 	}
 
 	c.JSON(constants.Created, gin.H{"data": token})
@@ -42,10 +38,9 @@ func loginHandler(c *gin.Context) {
 	token, err := loginService(&input)
 
 	if err != nil {
-		switch errMsg := err.Error(); errMsg {
-		case constants.UserNotFound:
-			c.JSON(constants.NotFound, gin.H{"error": constants.UserNotFound})
-			return
+		statusCode, msg := utils.GetServiceErrorResponse(err)
+		c.JSON(statusCode, gin.H{"error": msg})
+		return
 		case constants.InvalidPassword:
 			c.JSON(constants.Unauthorized, gin.H{"error": constants.InvalidPassword})
 			return
@@ -64,7 +59,8 @@ func listUsersHandler(c *gin.Context) {
 	users, err := listUsersService(includePosts)
 
 	if err != nil {
-		c.JSON(constants.InternalServerError, gin.H{"error": constants.SomethingWentWrong})
+		statusCode, msg := utils.GetServiceErrorResponse(err)
+		c.JSON(statusCode, gin.H{"error": msg})
 		return
 	}
 
