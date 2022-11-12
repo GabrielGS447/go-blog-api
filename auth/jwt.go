@@ -8,10 +8,9 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-var jwtSecret = os.Getenv("JWT_SECRET")
-
 // SignJWT signs a JWT token
 func SignJWT(user *models.User) (string, error) {
+	secret := os.Getenv("JWT_SECRET")
 	expirationTime := time.Now().Add(24 * time.Hour)
 
 	claims := jwt.MapClaims{
@@ -21,6 +20,5 @@ func SignJWT(user *models.User) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	return token.SignedString([]byte(jwtSecret))
+	return token.SignedString([]byte(secret))
 }
