@@ -1,12 +1,11 @@
 package db
 
 import (
-	"github.com/gabrielgaspar447/go-blog-api/resources/post"
-	"github.com/gabrielgaspar447/go-blog-api/resources/user"
+	"github.com/gabrielgaspar447/go-blog-api/models"
 	"gorm.io/gorm"
 )
 
-var usersSeed = []user.User{
+var usersSeed = []models.User{
 	{
 		ID:          1,
 		DisplayName: "John Doe",
@@ -21,7 +20,7 @@ var usersSeed = []user.User{
 	},
 }
 
-var postsSeed = []post.Post{
+var postsSeed = []models.Post{
 	{
 		ID:      1,
 		Title:   "First Post",

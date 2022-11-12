@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gabrielgaspar447/go-blog-api/resources/post"
-	"github.com/gabrielgaspar447/go-blog-api/resources/user"
+	"github.com/gabrielgaspar447/go-blog-api/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -28,7 +27,7 @@ func Connect(reset bool) {
 	if reset {
 		resetDB(db)
 	} else {
-		db.AutoMigrate(&user.User{}, &post.Post{})
+		db.AutoMigrate(&models.User{}, &models.Post{})
 	}
 
 	fmt.Println("Connection Opened to Database")
@@ -36,7 +35,7 @@ func Connect(reset bool) {
 }
 
 func resetDB(db *gorm.DB) {
-	db.Migrator().DropTable(&user.User{}, &post.Post{})
-	db.AutoMigrate(&user.User{}, &post.Post{})
+	db.Migrator().DropTable(&models.User{}, &models.Post{})
+	db.AutoMigrate(&models.User{}, &models.Post{})
 	seed(db)
 }
