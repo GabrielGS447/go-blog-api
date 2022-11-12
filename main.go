@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"github.com/gabrielgaspar447/go-blog-api/config"
+	"github.com/gabrielgaspar447/go-blog-api/db"
+)
 
 func main() {
-	fmt.Println("Hello World!")
+	config.LoadEnvs()
+	db.Connect()
 }
