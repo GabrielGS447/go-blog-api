@@ -19,24 +19,20 @@ func UserList(includePosts bool) ([]models.User, error) {
 	var users []models.User
 
 	if includePosts {
-		err := db.DB.Omit("Password").Preload("Posts").Find(&users).Error
-		return users, err
+		return users, db.DB.Omit("Password").Preload("Posts").Find(&users).Error
 	}
 
-	err := db.DB.Omit("Password").Find(&users).Error
-	return users, err
+	return users, db.DB.Omit("Password").Find(&users).Error
 }
 
 func UserFindById(id uint, includePosts bool) (models.User, error) {
 	var user models.User
 
 	if includePosts {
-		err := db.DB.Omit("Password").Preload("Posts").Find(&user, id).Error
-		return user, err
+		return user, db.DB.Omit("Password").Preload("Posts").Find(&user, id).Error
 	}
 
-	err := db.DB.Omit("Password").Find(&user, id).Error
-	return user, err
+	return user, db.DB.Omit("Password").Find(&user, id).Error
 }
 
 func UserDeleteById(id uint) error {
