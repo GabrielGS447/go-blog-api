@@ -62,16 +62,15 @@ func listUsersHandler(c *gin.Context) {
 }
 
 func getUserByIdHandler(c *gin.Context) {
-	id := c.Param("id")
 	includePosts := c.Query("posts") == "true"
+	id, err := strconv.Atoi(c.Param("id"))
 
-	idAsUint, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
 		c.JSON(constants.HTTP_BadRequest, gin.H{"error": constants.InvalidId})
 		return
 	}
 
-	user, err := getUserByIdService(uint(idAsUint), includePosts)
+	user, err := getUserByIdService(uint(id), includePosts)
 
 	if err != nil {
 		statusCode, msg := utils.GetServiceErrorResponse(err)

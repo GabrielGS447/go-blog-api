@@ -1,6 +1,8 @@
 package post
 
 import (
+	"strconv"
+
 	"github.com/gabrielgaspar447/go-blog-api/constants"
 	"github.com/gabrielgaspar447/go-blog-api/models"
 	"github.com/gabrielgaspar447/go-blog-api/utils"
@@ -40,4 +42,24 @@ func listPostsHandler(c *gin.Context) {
 	}
 
 	c.JSON(constants.HTTP_OK, gin.H{"data": posts})
+}
+
+func getPostByIdHandler(c *gin.Context) {
+	includeUser := c.Query("user") == "true"
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(constants.HTTP_BadRequest, gin.H{"error": constants.InvalidId})
+		return
+	}
+
+	post, err := getPostByIdService(uint(id), includeUser)
+
+	if err != nil {
+		statusCode, msg := utils.GetServiceErrorResponse(err)
+		c.JSON(statusCode, gin.H{"error": msg})
+		return
+	}
+
+	c.JSON(constants.HTTP_OK, gin.H{"data": post})
 }

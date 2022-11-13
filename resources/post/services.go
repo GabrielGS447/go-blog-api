@@ -26,3 +26,19 @@ func listPostsService(includeUser bool) ([]models.Post, error) {
 
 	return posts, nil
 }
+
+func getPostByIdService(id uint, includeUser bool) (models.Post, error) {
+	post, err := repositories.PostGetById(id, includeUser)
+	if err != nil {
+		return post, err
+	}
+
+	if includeUser {
+		post.User.Password = ""
+		post.User.ID = 0
+		post.User.CreatedAt = nil
+		post.User.UpdatedAt = nil
+	}
+
+	return post, nil
+}

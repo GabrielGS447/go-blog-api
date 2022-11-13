@@ -18,3 +18,13 @@ func PostList(includeUser bool) ([]models.Post, error) {
 
 	return posts, db.DB.Find(&posts).Error
 }
+
+func PostGetById(id uint, includeUser bool) (models.Post, error) {
+	var post models.Post
+
+	if includeUser {
+		return post, db.DB.Preload("User").First(&post, id).Error
+	}
+
+	return post, db.DB.First(&post, id).Error
+}
