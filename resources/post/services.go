@@ -49,3 +49,21 @@ func getPostByIdService(post *models.Post, id uint, includeUser bool) error {
 
 	return nil
 }
+
+func searchPostsService(posts *[]models.Post, query string, includeUser bool) error {
+	err := repositories.PostSearch(posts, query, includeUser)
+	if err != nil {
+		return err
+	}
+
+	if includeUser {
+		for i := range *posts {
+			(*posts)[i].User.Password = ""
+			(*posts)[i].User.ID = 0
+			(*posts)[i].User.CreatedAt = nil
+			(*posts)[i].User.UpdatedAt = nil
+		}
+	}
+
+	return nil
+}

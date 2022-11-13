@@ -67,3 +67,20 @@ func getPostByIdHandler(c *gin.Context) {
 
 	c.JSON(constants.HTTP_OK, gin.H{"data": post})
 }
+
+func searchPostsHandler(c *gin.Context) {
+	query := c.Query("q")
+	includeUser := c.Query("user") == "true"
+
+	var posts []models.Post
+
+	err := searchPostsService(&posts, query, includeUser)
+
+	if err != nil {
+		statusCode, msg := utils.GetServiceErrorResponse(err)
+		c.JSON(statusCode, gin.H{"error": msg})
+		return
+	}
+
+	c.JSON(constants.HTTP_OK, gin.H{"data": posts})
+}
