@@ -8,5 +8,5 @@ type Post struct {
 	Content   string    `json:"content" gorm:"not null" binding:"required,min=3"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	UserID    uint      `json:"user_id" gorm:"not null"`
+	UserID    uint      `json:"user_id,omitempty" gorm:"not null"`
 }

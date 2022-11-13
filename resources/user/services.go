@@ -56,7 +56,20 @@ func loginService(input *models.LoginDTO) (string, error) {
 }
 
 func listUsersService(includePosts bool) ([]models.User, error) {
-	return repositories.UserList(includePosts)
+	users, err := repositories.UserList(includePosts)
+	if err != nil {
+		return users, err
+	}
+
+	if includePosts {
+		for i := range users {
+			for j := range users[i].Posts {
+				users[i].Posts[j].UserID = 0
+			}
+		}
+	}
+
+	return users, nil
 }
 
 func getUserByIdService(id uint, includePosts bool) (models.User, error) {
@@ -67,6 +80,12 @@ func getUserByIdService(id uint, includePosts bool) (models.User, error) {
 
 	if user.ID == 0 {
 		return user, errors.New(constants.UserNotFound)
+	}
+
+	if includePosts {
+		for i := range user.Posts {
+			user.Posts[i].UserID = 0
+		}
 	}
 
 	return user, nil
