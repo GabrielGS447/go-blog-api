@@ -67,3 +67,19 @@ func searchPostsService(posts *[]models.Post, query string, includeUser bool) er
 
 	return nil
 }
+
+func updatePostService(input *models.Post, userId uint) error {
+	post := &models.Post{}
+	err := repositories.PostGetById(post, input.ID, false)
+	if err != nil {
+		return err
+	}
+
+	if post.ID == 0 {
+		return errors.New(constants.PostNotFound)
+	} else if post.UserID != userId {
+		return errors.New(constants.PostNotOwned)
+	}
+
+	return repositories.PostUpdate(input, input.ID)
+}
