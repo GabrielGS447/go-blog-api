@@ -33,7 +33,9 @@ func createPostHandler(c *gin.Context) {
 func listPostsHandler(c *gin.Context) {
 	includeUser := c.Query("user") == "true"
 
-	posts, err := listPostsService(includeUser)
+	var posts []models.Post
+
+	err := listPostsService(&posts, includeUser)
 
 	if err != nil {
 		statusCode, msg := utils.GetServiceErrorResponse(err)
@@ -53,7 +55,9 @@ func getPostByIdHandler(c *gin.Context) {
 		return
 	}
 
-	post, err := getPostByIdService(uint(id), includeUser)
+	var post models.Post
+
+	err = getPostByIdService(&post, uint(id), includeUser)
 
 	if err != nil {
 		statusCode, msg := utils.GetServiceErrorResponse(err)

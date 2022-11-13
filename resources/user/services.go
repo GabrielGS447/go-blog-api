@@ -55,31 +55,31 @@ func loginService(input *models.LoginDTO) (string, error) {
 	return auth.SignJWT(&user)
 }
 
-func listUsersService(includePosts bool) ([]models.User, error) {
-	users, err := repositories.UserList(includePosts)
+func listUsersService(users *[]models.User, includePosts bool) error {
+	err := repositories.UserList(users, includePosts)
 	if err != nil {
-		return users, err
+		return err
 	}
 
 	if includePosts {
-		for i := range users {
-			for j := range users[i].Posts {
-				users[i].Posts[j].UserID = 0
+		for i := range *users {
+			for j := range (*users)[i].Posts {
+				(*users)[i].Posts[j].UserID = 0
 			}
 		}
 	}
 
-	return users, nil
+	return nil
 }
 
-func getUserByIdService(id uint, includePosts bool) (models.User, error) {
-	user, err := repositories.UserFindById(id, includePosts)
+func getUserByIdService(user *models.User, id uint, includePosts bool) error {
+	err := repositories.UserFindById(user, id, includePosts)
 	if err != nil {
-		return user, err
+		return err
 	}
 
 	if user.ID == 0 {
-		return user, errors.New(constants.UserNotFound)
+		return errors.New(constants.UserNotFound)
 	}
 
 	if includePosts {
@@ -88,7 +88,7 @@ func getUserByIdService(id uint, includePosts bool) (models.User, error) {
 		}
 	}
 
-	return user, nil
+	return nil
 }
 
 func deleteUserByIdService(id uint) error {

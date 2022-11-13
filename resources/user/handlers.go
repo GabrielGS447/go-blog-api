@@ -50,7 +50,9 @@ func loginHandler(c *gin.Context) {
 func listUsersHandler(c *gin.Context) {
 	includePosts := c.Query("posts") == "true"
 
-	users, err := listUsersService(includePosts)
+	var users []models.User
+
+	err := listUsersService(&users, includePosts)
 
 	if err != nil {
 		statusCode, msg := utils.GetServiceErrorResponse(err)
@@ -70,7 +72,9 @@ func getUserByIdHandler(c *gin.Context) {
 		return
 	}
 
-	user, err := getUserByIdService(uint(id), includePosts)
+	var user models.User
+
+	err = getUserByIdService(&user, uint(id), includePosts)
 
 	if err != nil {
 		statusCode, msg := utils.GetServiceErrorResponse(err)

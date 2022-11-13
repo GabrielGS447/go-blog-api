@@ -15,24 +15,21 @@ func UserCreate(input *models.User) error {
 	return db.DB.Create(input).Error
 }
 
-func UserList(includePosts bool) ([]models.User, error) {
-	var users []models.User
+func UserList(users *[]models.User, includePosts bool) error {
 
 	if includePosts {
-		return users, db.DB.Omit("Password").Preload("Posts").Find(&users).Error
+		return db.DB.Omit("Password").Preload("Posts").Find(&users).Error
 	}
 
-	return users, db.DB.Omit("Password").Find(&users).Error
+	return db.DB.Omit("Password").Find(&users).Error
 }
 
-func UserFindById(id uint, includePosts bool) (models.User, error) {
-	var user models.User
-
+func UserFindById(user *models.User, id uint, includePosts bool) error {
 	if includePosts {
-		return user, db.DB.Omit("Password").Preload("Posts").Find(&user, id).Error
+		return db.DB.Omit("Password").Preload("Posts").Find(&user, id).Error
 	}
 
-	return user, db.DB.Omit("Password").Find(&user, id).Error
+	return db.DB.Omit("Password").Find(&user, id).Error
 }
 
 func UserDeleteById(id uint) error {

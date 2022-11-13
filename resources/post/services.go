@@ -9,28 +9,28 @@ func createPostService(input *models.Post) error {
 	return repositories.PostCreate(input)
 }
 
-func listPostsService(includeUser bool) ([]models.Post, error) {
-	posts, err := repositories.PostList(includeUser)
+func listPostsService(posts *[]models.Post, includeUser bool) error {
+	err := repositories.PostList(posts, includeUser)
 	if err != nil {
-		return posts, err
+		return err
 	}
 
 	if includeUser {
-		for i := range posts {
-			posts[i].User.Password = ""
-			posts[i].User.ID = 0
-			posts[i].User.CreatedAt = nil
-			posts[i].User.UpdatedAt = nil
+		for i := range *posts {
+			(*posts)[i].User.Password = ""
+			(*posts)[i].User.ID = 0
+			(*posts)[i].User.CreatedAt = nil
+			(*posts)[i].User.UpdatedAt = nil
 		}
 	}
 
-	return posts, nil
+	return nil
 }
 
-func getPostByIdService(id uint, includeUser bool) (models.Post, error) {
-	post, err := repositories.PostGetById(id, includeUser)
+func getPostByIdService(post *models.Post, id uint, includeUser bool) error {
+	err := repositories.PostGetById(post, id, includeUser)
 	if err != nil {
-		return post, err
+		return err
 	}
 
 	if includeUser {
@@ -40,5 +40,5 @@ func getPostByIdService(id uint, includeUser bool) (models.Post, error) {
 		post.User.UpdatedAt = nil
 	}
 
-	return post, nil
+	return nil
 }

@@ -9,22 +9,19 @@ func PostCreate(input *models.Post) error {
 	return db.DB.Create(input).Error
 }
 
-func PostList(includeUser bool) ([]models.Post, error) {
-	var posts []models.Post
-
+func PostList(posts *[]models.Post, includeUser bool) error {
 	if includeUser {
-		return posts, db.DB.Preload("User").Find(&posts).Error
+		return db.DB.Preload("User").Find(&posts).Error
 	}
 
-	return posts, db.DB.Find(&posts).Error
+	return db.DB.Find(&posts).Error
 }
 
-func PostGetById(id uint, includeUser bool) (models.Post, error) {
-	var post models.Post
+func PostGetById(post *models.Post, id uint, includeUser bool) error {
 
 	if includeUser {
-		return post, db.DB.Preload("User").First(&post, id).Error
+		return db.DB.Preload("User").First(&post, id).Error
 	}
 
-	return post, db.DB.First(&post, id).Error
+	return db.DB.First(&post, id).Error
 }
