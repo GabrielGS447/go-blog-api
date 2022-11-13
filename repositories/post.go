@@ -22,7 +22,7 @@ func PostGetById(post *models.Post, id uint, includeUser bool) error {
 		return db.DB.Preload("User").Find(&post, id).Error
 	}
 
-	return db.DB.First(&post, id).Error
+	return db.DB.Find(&post, id).Error
 }
 
 func PostSearch(posts *[]models.Post, query string, includeUser bool) error {
