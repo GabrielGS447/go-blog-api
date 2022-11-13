@@ -20,7 +20,7 @@ func PostList(posts *[]models.Post, includeUser bool) error {
 func PostGetById(post *models.Post, id uint, includeUser bool) error {
 
 	if includeUser {
-		return db.DB.Preload("User").First(&post, id).Error
+		return db.DB.Preload("User").Find(&post, id).Error
 	}
 
 	return db.DB.First(&post, id).Error

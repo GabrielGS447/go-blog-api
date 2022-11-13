@@ -10,6 +10,8 @@ func GetServiceErrorResponse(err error) (int, string) {
 		return constants.HTTP_NotFound, constants.UserNotFound
 	case constants.InvalidPassword:
 		return constants.HTTP_Unauthorized, constants.InvalidPassword
+	case constants.PostNotFound:
+		return constants.HTTP_NotFound, constants.PostNotFound
 	default:
 		return constants.HTTP_InternalServerError, constants.SomethingWentWrong
 	}

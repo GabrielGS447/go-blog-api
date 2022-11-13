@@ -1,6 +1,9 @@
 package post
 
 import (
+	"errors"
+
+	"github.com/gabrielgaspar447/go-blog-api/constants"
 	"github.com/gabrielgaspar447/go-blog-api/models"
 	"github.com/gabrielgaspar447/go-blog-api/repositories"
 )
@@ -31,6 +34,10 @@ func getPostByIdService(post *models.Post, id uint, includeUser bool) error {
 	err := repositories.PostGetById(post, id, includeUser)
 	if err != nil {
 		return err
+	}
+
+	if post.ID == 0 {
+		return errors.New(constants.PostNotFound)
 	}
 
 	if includeUser {
