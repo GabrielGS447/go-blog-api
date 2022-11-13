@@ -7,4 +7,5 @@ import (
 
 func LoadPostRoutes(app *gin.RouterGroup) {
 	app.POST("/create", auth.AuthHandler, createPostHandler)
+	app.GET("/list", listPostsHandler)
 }

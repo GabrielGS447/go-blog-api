@@ -27,3 +27,17 @@ func createPostHandler(c *gin.Context) {
 
 	c.JSON(constants.HTTP_Created, gin.H{"data": input})
 }
+
+func listPostsHandler(c *gin.Context) {
+	includeUser := c.Query("user") == "true"
+
+	posts, err := listPostsService(includeUser)
+
+	if err != nil {
+		statusCode, msg := utils.GetServiceErrorResponse(err)
+		c.JSON(statusCode, gin.H{"error": msg})
+		return
+	}
+
+	c.JSON(constants.HTTP_OK, gin.H{"data": posts})
+}
