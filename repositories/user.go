@@ -38,3 +38,7 @@ func UserFindById(id uint, includePosts bool) (models.User, error) {
 	err := db.DB.Omit("Password").Find(&user, id).Error
 	return user, err
 }
+
+func UserDeleteById(id uint) error {
+	return db.DB.Delete(&models.User{}, id).Error
+}

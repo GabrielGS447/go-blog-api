@@ -71,3 +71,7 @@ func getUserByIdService(id uint, includePosts bool) (models.User, error) {
 
 	return user, nil
 }
+
+func deleteUserByIdService(id uint) error {
+	return repositories.UserDeleteById(id)
+}

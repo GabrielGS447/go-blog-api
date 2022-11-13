@@ -81,3 +81,17 @@ func getUserByIdHandler(c *gin.Context) {
 
 	c.JSON(constants.HTTP_OK, gin.H{"data": user})
 }
+
+func deleteUserHandler(c *gin.Context) {
+	id := c.GetUint("userId")
+
+	err := deleteUserByIdService(id)
+
+	if err != nil {
+		statusCode, msg := utils.GetServiceErrorResponse(err)
+		c.JSON(statusCode, gin.H{"error": msg})
+		return
+	}
+
+	c.Status(constants.HTTP_NoContent)
+}

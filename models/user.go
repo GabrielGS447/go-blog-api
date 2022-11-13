@@ -11,7 +11,7 @@ type User struct {
 	Password    string    `json:"password,omitempty" gorm:"not null" binding:"required,min=6"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	Posts       []Post    `json:"posts,omitempty"`
+	Posts       []Post    `json:"posts,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type LoginDTO struct {
