@@ -36,3 +36,7 @@ func PostSearch(posts *[]models.Post, query string, includeUser bool) error {
 func PostUpdate(input *models.Post, id uint) error {
 	return db.DB.Model(&models.Post{}).Where("id = ?", id).Updates(input).Error
 }
+
+func PostDelete(id uint) error {
+	return db.DB.Delete(&models.Post{}, id).Error
+}

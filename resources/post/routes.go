@@ -11,4 +11,5 @@ func LoadPostRoutes(app *gin.RouterGroup) {
 	app.GET("/search", searchPostsHandler)
 	app.GET("/:id", getPostByIdHandler)
 	app.PUT("/:id", auth.AuthHandler, updatePostHandler)
+	app.DELETE("/:id", auth.AuthHandler, deletePostHandler)
 }

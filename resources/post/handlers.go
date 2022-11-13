@@ -113,3 +113,23 @@ func updatePostHandler(c *gin.Context) {
 
 	c.JSON(constants.HTTP_OK, gin.H{"data": input})
 }
+
+func deletePostHandler(c *gin.Context) {
+	userId := c.GetUint("userId")
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(constants.HTTP_BadRequest, gin.H{"error": constants.InvalidId})
+		return
+	}
+
+	err = deletePostService(uint(id), userId)
+
+	if err != nil {
+		statusCode, msg := utils.GetServiceErrorResponse(err)
+		c.JSON(statusCode, gin.H{"error": msg})
+		return
+	}
+
+	c.Status(constants.HTTP_NoContent)
+}
