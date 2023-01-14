@@ -19,7 +19,7 @@ func PostCreate(c *gin.Context) {
 		return
 	}
 
-	input.UserID = c.GetUint("userId")
+	input.UserId = c.GetUint("userId")
 
 	err := services.PostCreate(&input)
 
@@ -93,7 +93,7 @@ func PostUpdate(c *gin.Context) {
 		return
 	}
 
-	input.ID = uint(id)
+	input.Id = uint(id)
 
 	err = services.PostUpdate(&input, userId)
 

@@ -7,13 +7,13 @@ import (
 func seedUsers() {
 	var data = []models.User{
 		{
-			ID:          1,
+			Id:          1,
 			DisplayName: "John Doe",
 			Email:       "johndoe@go.com",
 			Password:    "$2a$08$I/wJJtinKh5jEjZjRGsVUes2Jfo.ZFe4n0D7amPHkmONzX4dGuEHy", // "123456"
 		},
 		{
-			ID:          2,
+			Id:          2,
 			DisplayName: "Jane Doe",
 			Email:       "janedoe@go.com",
 			Password:    "$2a$08$I/wJJtinKh5jEjZjRGsVUes2Jfo.ZFe4n0D7amPHkmONzX4dGuEHy", // "123456"
@@ -30,7 +30,7 @@ func UserFindByEmail(email string) (*models.User, error) {
 }
 
 func UserCreate(input *models.User) error {
-	return db.Omit("ID").Create(input).Error
+	return db.Omit("Id").Create(input).Error
 }
 
 func UserList(includePosts bool) (*[]models.User, error) {

@@ -19,7 +19,7 @@ func PostList(includeUser bool) (*[]models.Post, error) {
 	if includeUser {
 		for i := range *posts {
 			(*posts)[i].User.Password = ""
-			(*posts)[i].User.ID = 0
+			(*posts)[i].User.Id = 0
 			(*posts)[i].User.CreatedAt = nil
 			(*posts)[i].User.UpdatedAt = nil
 		}
@@ -34,13 +34,13 @@ func PostGetById(id uint, includeUser bool) (*models.Post, error) {
 		return nil, err
 	}
 
-	if post.ID == 0 {
+	if post.Id == 0 {
 		return nil, errs.ErrPostNotFound
 	}
 
 	if includeUser {
 		post.User.Password = ""
-		post.User.ID = 0
+		post.User.Id = 0
 		post.User.CreatedAt = nil
 		post.User.UpdatedAt = nil
 	}
@@ -57,7 +57,7 @@ func PostSearch(query string, includeUser bool) (*[]models.Post, error) {
 	if includeUser {
 		for i := range *posts {
 			(*posts)[i].User.Password = ""
-			(*posts)[i].User.ID = 0
+			(*posts)[i].User.Id = 0
 			(*posts)[i].User.CreatedAt = nil
 			(*posts)[i].User.UpdatedAt = nil
 		}
@@ -67,18 +67,18 @@ func PostSearch(query string, includeUser bool) (*[]models.Post, error) {
 }
 
 func PostUpdate(input *models.Post, userId uint) error {
-	post, err := database.PostGetById(input.ID, false)
+	post, err := database.PostGetById(input.Id, false)
 	if err != nil {
 		return err
 	}
 
-	if post.ID == 0 {
+	if post.Id == 0 {
 		return errs.ErrPostNotFound
-	} else if post.UserID != userId {
+	} else if post.UserId != userId {
 		return errs.ErrPostNotOwned
 	}
 
-	return database.PostUpdate(input, input.ID)
+	return database.PostUpdate(input, input.Id)
 }
 
 func PostDelete(id uint, userId uint) error {
@@ -87,9 +87,9 @@ func PostDelete(id uint, userId uint) error {
 		return err
 	}
 
-	if post.ID == 0 {
+	if post.Id == 0 {
 		return errs.ErrPostNotFound
-	} else if post.UserID != userId {
+	} else if post.UserId != userId {
 		return errs.ErrPostNotOwned
 	}
 

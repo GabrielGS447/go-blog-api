@@ -14,7 +14,7 @@ func UserSignup(input *models.User) (string, error) {
 		return "", err
 	}
 
-	if user.ID != 0 {
+	if user.Id != 0 {
 		return "", errs.ErrUserAlreadyExists
 	}
 
@@ -32,7 +32,7 @@ func UserSignup(input *models.User) (string, error) {
 
 	input.Password = "" // Clear password just in case
 
-	return auth.SignJWT(input.ID)
+	return auth.SignJWT(input.Id)
 }
 
 func UserLogin(input *models.LoginDTO) (string, error) {
@@ -41,7 +41,7 @@ func UserLogin(input *models.LoginDTO) (string, error) {
 		return "", err
 	}
 
-	if user.ID == 0 {
+	if user.Id == 0 {
 		return "", errs.ErrUserNotFound
 	}
 
@@ -50,7 +50,7 @@ func UserLogin(input *models.LoginDTO) (string, error) {
 		return "", errs.ErrInvalidPassword
 	}
 
-	return auth.SignJWT(user.ID)
+	return auth.SignJWT(user.Id)
 }
 
 func UserList(includePosts bool) (*[]models.User, error) {
@@ -62,7 +62,7 @@ func UserList(includePosts bool) (*[]models.User, error) {
 	if includePosts {
 		for i := range *users {
 			for j := range (*users)[i].Posts {
-				(*users)[i].Posts[j].UserID = 0
+				(*users)[i].Posts[j].UserId = 0
 			}
 		}
 	}
@@ -76,13 +76,13 @@ func UserGetById(id uint, includePosts bool) (*models.User, error) {
 		return nil, err
 	}
 
-	if user.ID == 0 {
+	if user.Id == 0 {
 		return nil, errs.ErrUserNotFound
 	}
 
 	if includePosts {
 		for i := range user.Posts {
-			user.Posts[i].UserID = 0
+			user.Posts[i].UserId = 0
 		}
 	}
 

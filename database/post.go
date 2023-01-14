@@ -7,16 +7,16 @@ import (
 func seedPosts() {
 	var data = []models.Post{
 		{
-			ID:      1,
+			Id:      1,
 			Title:   "First Post",
 			Content: "This is the first post",
-			UserID:  1,
+			UserId:  1,
 		},
 		{
-			ID:      2,
+			Id:      2,
 			Title:   "Second Post",
 			Content: "This is the second post",
-			UserID:  2,
+			UserId:  2,
 		},
 	}
 
