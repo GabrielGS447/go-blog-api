@@ -1,6 +1,9 @@
 package database
 
 import (
+	"context"
+	"time"
+
 	"github.com/gabrielgaspar447/go-blog-api/models"
 )
 
@@ -23,53 +26,71 @@ func seedPosts() {
 	db.Create(&data)
 }
 
-func PostCreate(input *models.Post) error {
-	return db.Create(input).Error
+func PostCreate(ctx context.Context, input *models.Post) error {
+	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	return db.WithContext(timeoutCtx).Create(input).Error
 }
 
-func PostList(includeUser bool) (*[]models.Post, error) {
+func PostList(ctx context.Context, includeUser bool) (*[]models.Post, error) {
 	posts := make([]models.Post, 0)
 	var err error
 
+	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
 	if includeUser {
-		err = db.Preload("User").Find(&posts).Error
+		err = db.WithContext(timeoutCtx).Preload("User").Find(&posts).Error
 	} else {
-		err = db.Find(&posts).Error
+		err = db.WithContext(timeoutCtx).Find(&posts).Error
 	}
 
 	return &posts, err
 }
 
-func PostGetById(id uint, includeUser bool) (*models.Post, error) {
+func PostGetById(ctx context.Context, id uint, includeUser bool) (*models.Post, error) {
 	post := &models.Post{}
 	var err error
 
+	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
 	if includeUser {
-		err = db.Preload("User").Find(post, id).Error
+		err = db.WithContext(timeoutCtx).Preload("User").Find(post, id).Error
 	} else {
-		err = db.Find(post, id).Error
+		err = db.WithContext(timeoutCtx).Find(post, id).Error
 	}
 
 	return post, err
 }
 
-func PostSearch(query string, includeUser bool) (*[]models.Post, error) {
+func PostSearch(ctx context.Context, query string, includeUser bool) (*[]models.Post, error) {
 	posts := make([]models.Post, 0)
 	var err error
 
+	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
 	if includeUser {
-		err = db.Preload("User").Where("title LIKE ?", "%"+query+"%").Find(&posts).Error
+		err = db.WithContext(timeoutCtx).Preload("User").Where("title LIKE ?", "%"+query+"%").Find(&posts).Error
 	} else {
-		err = db.Where("title LIKE ?", "%"+query+"%").Find(&posts).Error
+		err = db.WithContext(timeoutCtx).Where("title LIKE ?", "%"+query+"%").Find(&posts).Error
 	}
 
 	return &posts, err
 }
 
-func PostUpdate(input *models.Post, id uint) error {
-	return db.Model(&models.Post{}).Where("id = ?", id).Updates(input).Error
+func PostUpdate(ctx context.Context, input *models.Post, id uint) error {
+	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	return db.WithContext(timeoutCtx).Model(&models.Post{}).Where("id = ?", id).Updates(input).Error
 }
 
-func PostDelete(id uint) error {
-	return db.Delete(&models.Post{}, id).Error
+func PostDelete(ctx context.Context, id uint) error {
+	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	return db.WithContext(timeoutCtx).Delete(&models.Post{}, id).Error
 }

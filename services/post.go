@@ -1,17 +1,19 @@
 package services
 
 import (
+	"context"
+
 	"github.com/gabrielgaspar447/go-blog-api/database"
 	"github.com/gabrielgaspar447/go-blog-api/errs"
 	"github.com/gabrielgaspar447/go-blog-api/models"
 )
 
-func PostCreate(input *models.Post) error {
-	return database.PostCreate(input)
+func PostCreate(ctx context.Context, input *models.Post) error {
+	return database.PostCreate(ctx, input)
 }
 
-func PostList(includeUser bool) (*[]models.Post, error) {
-	posts, err := database.PostList(includeUser)
+func PostList(ctx context.Context, includeUser bool) (*[]models.Post, error) {
+	posts, err := database.PostList(ctx, includeUser)
 	if err != nil {
 		return nil, err
 	}
@@ -28,8 +30,8 @@ func PostList(includeUser bool) (*[]models.Post, error) {
 	return posts, nil
 }
 
-func PostGetById(id uint, includeUser bool) (*models.Post, error) {
-	post, err := database.PostGetById(id, includeUser)
+func PostGetById(ctx context.Context, id uint, includeUser bool) (*models.Post, error) {
+	post, err := database.PostGetById(ctx, id, includeUser)
 	if err != nil {
 		return nil, err
 	}
@@ -48,8 +50,8 @@ func PostGetById(id uint, includeUser bool) (*models.Post, error) {
 	return post, nil
 }
 
-func PostSearch(query string, includeUser bool) (*[]models.Post, error) {
-	posts, err := database.PostSearch(query, includeUser)
+func PostSearch(ctx context.Context, query string, includeUser bool) (*[]models.Post, error) {
+	posts, err := database.PostSearch(ctx, query, includeUser)
 	if err != nil {
 		return nil, err
 	}
@@ -66,8 +68,8 @@ func PostSearch(query string, includeUser bool) (*[]models.Post, error) {
 	return posts, nil
 }
 
-func PostUpdate(input *models.Post, userId uint) error {
-	post, err := database.PostGetById(input.Id, false)
+func PostUpdate(ctx context.Context, input *models.Post, userId uint) error {
+	post, err := database.PostGetById(ctx, input.Id, false)
 	if err != nil {
 		return err
 	}
@@ -78,11 +80,11 @@ func PostUpdate(input *models.Post, userId uint) error {
 		return errs.ErrPostNotOwned
 	}
 
-	return database.PostUpdate(input, input.Id)
+	return database.PostUpdate(ctx, input, input.Id)
 }
 
-func PostDelete(id uint, userId uint) error {
-	post, err := database.PostGetById(id, false)
+func PostDelete(ctx context.Context, id uint, userId uint) error {
+	post, err := database.PostGetById(ctx, id, false)
 	if err != nil {
 		return err
 	}
@@ -93,5 +95,5 @@ func PostDelete(id uint, userId uint) error {
 		return errs.ErrPostNotOwned
 	}
 
-	return database.PostDelete(id)
+	return database.PostDelete(ctx, id)
 }

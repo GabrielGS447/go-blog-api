@@ -20,7 +20,7 @@ func UserSignup(c *gin.Context) {
 		return
 	}
 
-	token, err := services.UserSignup(&input)
+	token, err := services.UserSignup(c.Request.Context(), &input)
 
 	if err != nil {
 		handleUserErrors(c, err)
@@ -38,7 +38,7 @@ func UserLogin(c *gin.Context) {
 		return
 	}
 
-	token, err := services.UserLogin(&input)
+	token, err := services.UserLogin(c.Request.Context(), &input)
 
 	if err != nil {
 		handleUserErrors(c, err)
@@ -51,7 +51,7 @@ func UserLogin(c *gin.Context) {
 func UserList(c *gin.Context) {
 	includePosts := c.Query("posts") == "true"
 
-	users, err := services.UserList(includePosts)
+	users, err := services.UserList(c.Request.Context(), includePosts)
 
 	if err != nil {
 		handleUserErrors(c, err)
@@ -70,7 +70,7 @@ func UserGetById(c *gin.Context) {
 		return
 	}
 
-	user, err := services.UserGetById(uint(id), includePosts)
+	user, err := services.UserGetById(c.Request.Context(), uint(id), includePosts)
 
 	if err != nil {
 		handleUserErrors(c, err)
@@ -83,7 +83,7 @@ func UserGetById(c *gin.Context) {
 func UserDeleteSelf(c *gin.Context) {
 	id := c.GetUint("userId")
 
-	err := services.UserDeleteSelf(id)
+	err := services.UserDeleteSelf(c.Request.Context(), id)
 
 	if err != nil {
 		handleUserErrors(c, err)

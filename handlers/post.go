@@ -21,7 +21,7 @@ func PostCreate(c *gin.Context) {
 
 	input.UserId = c.GetUint("userId")
 
-	err := services.PostCreate(&input)
+	err := services.PostCreate(c.Request.Context(), &input)
 
 	if err != nil {
 		handlePostErrors(c, err)
@@ -34,7 +34,7 @@ func PostCreate(c *gin.Context) {
 func PostList(c *gin.Context) {
 	includeUser := c.Query("user") == "true"
 
-	posts, err := services.PostList(includeUser)
+	posts, err := services.PostList(c.Request.Context(), includeUser)
 
 	if err != nil {
 		handlePostErrors(c, err)
@@ -53,7 +53,7 @@ func PostGetById(c *gin.Context) {
 		return
 	}
 
-	post, err := services.PostGetById(uint(id), includeUser)
+	post, err := services.PostGetById(c.Request.Context(), uint(id), includeUser)
 
 	if err != nil {
 		handlePostErrors(c, err)
@@ -67,7 +67,7 @@ func PostSearch(c *gin.Context) {
 	query := c.Query("q")
 	includeUser := c.Query("user") == "true"
 
-	posts, err := services.PostSearch(query, includeUser)
+	posts, err := services.PostSearch(c.Request.Context(), query, includeUser)
 
 	if err != nil {
 		handlePostErrors(c, err)
@@ -95,7 +95,7 @@ func PostUpdate(c *gin.Context) {
 
 	input.Id = uint(id)
 
-	err = services.PostUpdate(&input, userId)
+	err = services.PostUpdate(c.Request.Context(), &input, userId)
 
 	if err != nil {
 		handlePostErrors(c, err)
@@ -114,7 +114,7 @@ func PostDelete(c *gin.Context) {
 		return
 	}
 
-	err = services.PostDelete(uint(id), userId)
+	err = services.PostDelete(c.Request.Context(), uint(id), userId)
 
 	if err != nil {
 		handlePostErrors(c, err)

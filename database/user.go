@@ -1,6 +1,9 @@
 package database
 
 import (
+	"context"
+	"time"
+
 	"github.com/gabrielgaspar447/go-blog-api/models"
 )
 
@@ -23,42 +26,58 @@ func seedUsers() {
 	db.Create(&data)
 }
 
-func UserFindByEmail(email string) (*models.User, error) {
+func UserFindByEmail(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
-	err := db.Limit(1).Find(&user, "email = ?", email).Error
+
+	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	err := db.WithContext(timeoutCtx).Limit(1).Find(&user, "email = ?", email).Error
 	return &user, err
 }
 
-func UserCreate(input *models.User) error {
-	return db.Omit("Id").Create(input).Error
+func UserCreate(ctx context.Context, input *models.User) error {
+	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	return db.WithContext(timeoutCtx).Omit("Id").Create(input).Error
 }
 
-func UserList(includePosts bool) (*[]models.User, error) {
+func UserList(ctx context.Context, includePosts bool) (*[]models.User, error) {
 	users := make([]models.User, 0)
 	var err error
 
+	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
 	if includePosts {
-		err = db.Omit("Password").Preload("Posts").Find(&users).Error
+		err = db.WithContext(timeoutCtx).Omit("Password").Preload("Posts").Find(&users).Error
 	} else {
-		err = db.Omit("Password").Find(&users).Error
+		err = db.WithContext(timeoutCtx).Omit("Password").Find(&users).Error
 	}
 
 	return &users, err
 }
 
-func UserGetById(id uint, includePosts bool) (*models.User, error) {
+func UserGetById(ctx context.Context, id uint, includePosts bool) (*models.User, error) {
 	user := &models.User{}
 	var err error
 
+	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
 	if includePosts {
-		err = db.Omit("Password").Preload("Posts").Find(user, id).Error
+		err = db.WithContext(timeoutCtx).Omit("Password").Preload("Posts").Find(user, id).Error
 	} else {
-		err = db.Omit("Password").Find(user, id).Error
+		err = db.WithContext(timeoutCtx).Omit("Password").Find(user, id).Error
 	}
 
 	return user, err
 }
 
-func UserDeleteById(id uint) error {
-	return db.Delete(&models.User{}, id).Error
+func UserDeleteById(ctx context.Context, id uint) error {
+	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	return db.WithContext(timeoutCtx).Delete(&models.User{}, id).Error
 }

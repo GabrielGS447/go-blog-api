@@ -1,6 +1,8 @@
 package services
 
 import (
+	"context"
+
 	"github.com/gabrielgaspar447/go-blog-api/auth"
 	"github.com/gabrielgaspar447/go-blog-api/database"
 	"github.com/gabrielgaspar447/go-blog-api/errs"
@@ -8,8 +10,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func UserSignup(input *models.User) (string, error) {
-	user, err := database.UserFindByEmail(input.Email)
+func UserSignup(ctx context.Context, input *models.User) (string, error) {
+	user, err := database.UserFindByEmail(ctx, input.Email)
 	if err != nil {
 		return "", err
 	}
@@ -25,7 +27,7 @@ func UserSignup(input *models.User) (string, error) {
 
 	input.Password = string(hash)
 
-	err = database.UserCreate(input)
+	err = database.UserCreate(ctx, input)
 	if err != nil {
 		return "", err
 	}
@@ -35,8 +37,8 @@ func UserSignup(input *models.User) (string, error) {
 	return auth.SignJWT(input.Id)
 }
 
-func UserLogin(input *models.LoginDTO) (string, error) {
-	user, err := database.UserFindByEmail(input.Email)
+func UserLogin(ctx context.Context, input *models.LoginDTO) (string, error) {
+	user, err := database.UserFindByEmail(ctx, input.Email)
 	if err != nil {
 		return "", err
 	}
@@ -53,8 +55,8 @@ func UserLogin(input *models.LoginDTO) (string, error) {
 	return auth.SignJWT(user.Id)
 }
 
-func UserList(includePosts bool) (*[]models.User, error) {
-	users, err := database.UserList(includePosts)
+func UserList(ctx context.Context, includePosts bool) (*[]models.User, error) {
+	users, err := database.UserList(ctx, includePosts)
 	if err != nil {
 		return nil, err
 	}
@@ -70,8 +72,8 @@ func UserList(includePosts bool) (*[]models.User, error) {
 	return users, nil
 }
 
-func UserGetById(id uint, includePosts bool) (*models.User, error) {
-	user, err := database.UserGetById(id, includePosts)
+func UserGetById(ctx context.Context, id uint, includePosts bool) (*models.User, error) {
+	user, err := database.UserGetById(ctx, id, includePosts)
 	if err != nil {
 		return nil, err
 	}
@@ -89,6 +91,6 @@ func UserGetById(id uint, includePosts bool) (*models.User, error) {
 	return user, nil
 }
 
-func UserDeleteSelf(id uint) error {
-	return database.UserDeleteById(id)
+func UserDeleteSelf(ctx context.Context, id uint) error {
+	return database.UserDeleteById(ctx, id)
 }
