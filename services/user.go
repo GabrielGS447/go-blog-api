@@ -32,7 +32,7 @@ func UserSignup(input *models.User) (string, error) {
 
 	input.Password = "" // Clear password just in case
 
-	return auth.SignJWT(input)
+	return auth.SignJWT(input.ID)
 }
 
 func UserLogin(input *models.LoginDTO) (string, error) {
@@ -50,7 +50,7 @@ func UserLogin(input *models.LoginDTO) (string, error) {
 		return "", errs.ErrInvalidPassword
 	}
 
-	return auth.SignJWT(&user)
+	return auth.SignJWT(user.ID)
 }
 
 func UserList(users *[]models.User, includePosts bool) error {

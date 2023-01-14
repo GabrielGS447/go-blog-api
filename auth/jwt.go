@@ -6,17 +6,16 @@ import (
 	"time"
 
 	"github.com/gabrielgaspar447/go-blog-api/errs"
-	"github.com/gabrielgaspar447/go-blog-api/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func SignJWT(user *models.User) (string, error) {
+func SignJWT(userId uint) (string, error) {
 	secret := os.Getenv("JWT_SECRET")
 	expirationTime := time.Now().Add(24 * time.Hour)
 
 	claims := jwt.MapClaims{
-		"userId": user.ID,
+		"userId": userId,
 		"exp":    expirationTime.Unix(),
 	}
 

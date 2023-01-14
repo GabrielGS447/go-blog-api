@@ -22,6 +22,8 @@ func getErrorMsg(fe validator.FieldError) string {
 	switch fe.Tag() {
 	case "required":
 		return fe.Field() + " is required"
+	case "isdefault":
+		return fe.Field() + " field is not allowed"
 	case "email":
 		return fe.Field() + " must be a valid email"
 	case "min":
