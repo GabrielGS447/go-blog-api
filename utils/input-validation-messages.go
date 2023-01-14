@@ -6,7 +6,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func GetErrorResponse(err error) []string {
+func GetValidationErrors(err error) []string {
 	var ve validator.ValidationErrors
 	if errors.As(err, &ve) {
 		out := make([]string, len(ve))

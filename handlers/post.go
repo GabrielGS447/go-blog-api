@@ -1,0 +1,150 @@
+package handlers
+
+import (
+	"net/http"
+	"strconv"
+
+	"github.com/gabrielgaspar447/go-blog-api/errs"
+	"github.com/gabrielgaspar447/go-blog-api/models"
+	"github.com/gabrielgaspar447/go-blog-api/services"
+	"github.com/gabrielgaspar447/go-blog-api/utils"
+	"github.com/gin-gonic/gin"
+)
+
+func CreatePostHandler(c *gin.Context) {
+	var input models.Post
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		handlePostErrors(c, err)
+		return
+	}
+
+	input.UserID = c.GetUint("userId")
+
+	err := services.CreatePostService(&input)
+
+	if err != nil {
+		handlePostErrors(c, err)
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"data": input})
+}
+
+func ListPostsHandler(c *gin.Context) {
+	includeUser := c.Query("user") == "true"
+
+	var posts []models.Post
+
+	err := services.ListPostsService(&posts, includeUser)
+
+	if err != nil {
+		handlePostErrors(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": posts})
+}
+
+func GetPostByIdHandler(c *gin.Context) {
+	includeUser := c.Query("user") == "true"
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errs.ErrInvalidId})
+		return
+	}
+
+	var post models.Post
+
+	err = services.GetPostByIdService(&post, uint(id), includeUser)
+
+	if err != nil {
+		handlePostErrors(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": post})
+}
+
+func SearchPostsHandler(c *gin.Context) {
+	query := c.Query("q")
+	includeUser := c.Query("user") == "true"
+
+	var posts []models.Post
+
+	err := services.SearchPostsService(&posts, query, includeUser)
+
+	if err != nil {
+		handlePostErrors(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": posts})
+}
+
+func UpdatePostHandler(c *gin.Context) {
+	var input models.Post
+	userId := c.GetUint("userId")
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		handlePostErrors(c, err)
+		return
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errs.ErrInvalidId})
+		return
+	}
+
+	input.ID = uint(id)
+
+	err = services.UpdatePostService(&input, userId)
+
+	if err != nil {
+		handlePostErrors(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": input})
+}
+
+func DeletePostHandler(c *gin.Context) {
+	userId := c.GetUint("userId")
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errs.ErrInvalidId})
+		return
+	}
+
+	err = services.DeletePostService(uint(id), userId)
+
+	if err != nil {
+		handlePostErrors(c, err)
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+func handlePostErrors(c *gin.Context, err error) {
+	if valErrs := utils.GetValidationErrors(err); valErrs != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": valErrs})
+		return
+	}
+
+	switch err {
+	case errs.ErrPostNotFound:
+		c.JSON(http.StatusNotFound, gin.H{"error": errs.ErrPostNotFound.Error()})
+		return
+	case errs.ErrPostNotOwned:
+		c.JSON(http.StatusForbidden, gin.H{"error": errs.ErrPostNotOwned.Error()})
+		return
+	default:
+		c.JSON(http.StatusInternalServerError, gin.H{"error": errs.ErrUnknown.Error()})
+		return
+	}
+}

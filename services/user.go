@@ -1,23 +1,21 @@
-package user
+package services
 
 import (
-	"errors"
-
 	"github.com/gabrielgaspar447/go-blog-api/auth"
-	"github.com/gabrielgaspar447/go-blog-api/constants"
+	"github.com/gabrielgaspar447/go-blog-api/database"
+	"github.com/gabrielgaspar447/go-blog-api/errs"
 	"github.com/gabrielgaspar447/go-blog-api/models"
-	"github.com/gabrielgaspar447/go-blog-api/repositories"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func signupService(input *models.User) (string, error) {
-	user, err := repositories.UserFindByEmail(input.Email)
+func SignupService(input *models.User) (string, error) {
+	user, err := database.UserFindByEmail(input.Email)
 	if err != nil {
 		return "", err
 	}
 
 	if user.ID != 0 {
-		return "", errors.New(constants.UserAlreadyExists)
+		return "", errs.ErrUserAlreadyExists
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(input.Password), 8)
@@ -27,7 +25,7 @@ func signupService(input *models.User) (string, error) {
 
 	input.Password = string(hash)
 
-	err = repositories.UserCreate(input)
+	err = database.UserCreate(input)
 	if err != nil {
 		return "", err
 	}
@@ -37,26 +35,26 @@ func signupService(input *models.User) (string, error) {
 	return auth.SignJWT(input)
 }
 
-func loginService(input *models.LoginDTO) (string, error) {
-	user, err := repositories.UserFindByEmail(input.Email)
+func LoginService(input *models.LoginDTO) (string, error) {
+	user, err := database.UserFindByEmail(input.Email)
 	if err != nil {
 		return "", err
 	}
 
 	if user.ID == 0 {
-		return "", errors.New(constants.UserNotFound)
+		return "", errs.ErrUserNotFound
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
 	if err != nil {
-		return "", errors.New(constants.InvalidPassword)
+		return "", errs.ErrInvalidPassword
 	}
 
 	return auth.SignJWT(&user)
 }
 
-func listUsersService(users *[]models.User, includePosts bool) error {
-	err := repositories.UserList(users, includePosts)
+func ListUsersService(users *[]models.User, includePosts bool) error {
+	err := database.UserList(users, includePosts)
 	if err != nil {
 		return err
 	}
@@ -72,14 +70,14 @@ func listUsersService(users *[]models.User, includePosts bool) error {
 	return nil
 }
 
-func getUserByIdService(user *models.User, id uint, includePosts bool) error {
-	err := repositories.UserFindById(user, id, includePosts)
+func GetUserByIdService(user *models.User, id uint, includePosts bool) error {
+	err := database.UserFindById(user, id, includePosts)
 	if err != nil {
 		return err
 	}
 
 	if user.ID == 0 {
-		return errors.New(constants.UserNotFound)
+		return errs.ErrUserNotFound
 	}
 
 	if includePosts {
@@ -91,6 +89,6 @@ func getUserByIdService(user *models.User, id uint, includePosts bool) error {
 	return nil
 }
 
-func deleteUserByIdService(id uint) error {
-	return repositories.UserDeleteById(id)
+func DeleteUserByIdService(id uint) error {
+	return database.UserDeleteById(id)
 }

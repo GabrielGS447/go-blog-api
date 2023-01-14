@@ -1,12 +1,17 @@
 package main
 
 import (
-	"github.com/gabrielgaspar447/go-blog-api/config"
-	"github.com/gabrielgaspar447/go-blog-api/db"
+	"os"
+
+	"github.com/gabrielgaspar447/go-blog-api/app"
 )
 
 func main() {
-	config.LoadEnvs()
-	db.Connect(true)
-	config.StartServer()
+	server, err := app.Setup()
+	if err != nil {
+		panic(err)
+	}
+
+	port := os.Getenv("PORT")
+	server.Run(":" + port)
 }
