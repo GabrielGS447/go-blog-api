@@ -102,7 +102,7 @@ func PostUpdate(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": input})
+	c.Status(http.StatusNoContent)
 }
 
 func PostDelete(c *gin.Context) {
