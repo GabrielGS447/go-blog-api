@@ -9,10 +9,10 @@ import (
 func LoadPostRoutes(app *gin.Engine) {
 	post := app.Group("/post")
 
-	post.POST("/create", auth.AuthHandler, handlers.CreatePostHandler)
-	post.GET("/list", handlers.ListPostsHandler)
-	post.GET("/search", handlers.SearchPostsHandler)
-	post.GET("/:id", handlers.GetPostByIdHandler)
-	post.PUT("/:id", auth.AuthHandler, handlers.UpdatePostHandler)
-	post.DELETE("/:id", auth.AuthHandler, handlers.DeletePostHandler)
+	post.POST("/create", auth.AuthHandler, handlers.PostCreate)
+	post.GET("/list", handlers.PostList)
+	post.GET("/search", handlers.PostSearch)
+	post.GET("/:id", handlers.PostGetById)
+	post.PUT("/:id", auth.AuthHandler, handlers.PostUpdate)
+	post.DELETE("/:id", auth.AuthHandler, handlers.PostDelete)
 }

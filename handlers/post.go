@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreatePostHandler(c *gin.Context) {
+func PostCreate(c *gin.Context) {
 	var input models.Post
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -21,7 +21,7 @@ func CreatePostHandler(c *gin.Context) {
 
 	input.UserID = c.GetUint("userId")
 
-	err := services.CreatePostService(&input)
+	err := services.PostCreate(&input)
 
 	if err != nil {
 		handlePostErrors(c, err)
@@ -31,12 +31,12 @@ func CreatePostHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"data": input})
 }
 
-func ListPostsHandler(c *gin.Context) {
+func PostList(c *gin.Context) {
 	includeUser := c.Query("user") == "true"
 
 	var posts []models.Post
 
-	err := services.ListPostsService(&posts, includeUser)
+	err := services.PostList(&posts, includeUser)
 
 	if err != nil {
 		handlePostErrors(c, err)
@@ -46,7 +46,7 @@ func ListPostsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": posts})
 }
 
-func GetPostByIdHandler(c *gin.Context) {
+func PostGetById(c *gin.Context) {
 	includeUser := c.Query("user") == "true"
 	id, err := strconv.Atoi(c.Param("id"))
 
@@ -57,7 +57,7 @@ func GetPostByIdHandler(c *gin.Context) {
 
 	var post models.Post
 
-	err = services.GetPostByIdService(&post, uint(id), includeUser)
+	err = services.PostGetById(&post, uint(id), includeUser)
 
 	if err != nil {
 		handlePostErrors(c, err)
@@ -67,13 +67,13 @@ func GetPostByIdHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": post})
 }
 
-func SearchPostsHandler(c *gin.Context) {
+func PostSearch(c *gin.Context) {
 	query := c.Query("q")
 	includeUser := c.Query("user") == "true"
 
 	var posts []models.Post
 
-	err := services.SearchPostsService(&posts, query, includeUser)
+	err := services.PostSearch(&posts, query, includeUser)
 
 	if err != nil {
 		handlePostErrors(c, err)
@@ -83,7 +83,7 @@ func SearchPostsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": posts})
 }
 
-func UpdatePostHandler(c *gin.Context) {
+func PostUpdate(c *gin.Context) {
 	var input models.Post
 	userId := c.GetUint("userId")
 
@@ -101,7 +101,7 @@ func UpdatePostHandler(c *gin.Context) {
 
 	input.ID = uint(id)
 
-	err = services.UpdatePostService(&input, userId)
+	err = services.PostUpdate(&input, userId)
 
 	if err != nil {
 		handlePostErrors(c, err)
@@ -111,7 +111,7 @@ func UpdatePostHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": input})
 }
 
-func DeletePostHandler(c *gin.Context) {
+func PostDelete(c *gin.Context) {
 	userId := c.GetUint("userId")
 	id, err := strconv.Atoi(c.Param("id"))
 
@@ -120,7 +120,7 @@ func DeletePostHandler(c *gin.Context) {
 		return
 	}
 
-	err = services.DeletePostService(uint(id), userId)
+	err = services.PostDelete(uint(id), userId)
 
 	if err != nil {
 		handlePostErrors(c, err)

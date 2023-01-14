@@ -9,9 +9,9 @@ import (
 func LoadUserRoutes(app *gin.Engine) {
 	user := app.Group("/user")
 
-	user.POST("/signup", handlers.SignupHandler)
-	user.POST("/login", handlers.LoginHandler)
-	user.GET("/list", handlers.ListUsersHandler)
-	user.GET("/:id", handlers.GetUserByIdHandler)
-	user.DELETE("/me", auth.AuthHandler, handlers.DeleteUserHandler)
+	user.POST("/signup", handlers.UserSignup)
+	user.POST("/login", handlers.UserLogin)
+	user.GET("/list", handlers.UserList)
+	user.GET("/:id", handlers.UserGetById)
+	user.DELETE("/me", auth.AuthHandler, handlers.UserDeleteSelf)
 }

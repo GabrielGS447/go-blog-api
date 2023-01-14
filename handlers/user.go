@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SignupHandler(c *gin.Context) {
+func UserSignup(c *gin.Context) {
 	var input models.User
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -20,7 +20,7 @@ func SignupHandler(c *gin.Context) {
 		return
 	}
 
-	token, err := services.SignupService(&input)
+	token, err := services.UserSignup(&input)
 
 	if err != nil {
 		handleUserErrors(c, err)
@@ -30,7 +30,7 @@ func SignupHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"data": token})
 }
 
-func LoginHandler(c *gin.Context) {
+func UserLogin(c *gin.Context) {
 	var input models.LoginDTO
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -38,7 +38,7 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	token, err := services.LoginService(&input)
+	token, err := services.UserLogin(&input)
 
 	if err != nil {
 		handleUserErrors(c, err)
@@ -48,12 +48,12 @@ func LoginHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": token})
 }
 
-func ListUsersHandler(c *gin.Context) {
+func UserList(c *gin.Context) {
 	includePosts := c.Query("posts") == "true"
 
 	var users []models.User
 
-	err := services.ListUsersService(&users, includePosts)
+	err := services.UserList(&users, includePosts)
 
 	if err != nil {
 		handleUserErrors(c, err)
@@ -63,7 +63,7 @@ func ListUsersHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": users})
 }
 
-func GetUserByIdHandler(c *gin.Context) {
+func UserGetById(c *gin.Context) {
 	includePosts := c.Query("posts") == "true"
 	id, err := strconv.Atoi(c.Param("id"))
 
@@ -74,7 +74,7 @@ func GetUserByIdHandler(c *gin.Context) {
 
 	var user models.User
 
-	err = services.GetUserByIdService(&user, uint(id), includePosts)
+	err = services.UserGetById(&user, uint(id), includePosts)
 
 	if err != nil {
 		handleUserErrors(c, err)
@@ -84,10 +84,10 @@ func GetUserByIdHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
-func DeleteUserHandler(c *gin.Context) {
+func UserDeleteSelf(c *gin.Context) {
 	id := c.GetUint("userId")
 
-	err := services.DeleteUserByIdService(id)
+	err := services.UserDeleteSelf(id)
 
 	if err != nil {
 		handleUserErrors(c, err)

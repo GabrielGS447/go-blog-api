@@ -8,7 +8,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func SignupService(input *models.User) (string, error) {
+func UserSignup(input *models.User) (string, error) {
 	user, err := database.UserFindByEmail(input.Email)
 	if err != nil {
 		return "", err
@@ -35,7 +35,7 @@ func SignupService(input *models.User) (string, error) {
 	return auth.SignJWT(input)
 }
 
-func LoginService(input *models.LoginDTO) (string, error) {
+func UserLogin(input *models.LoginDTO) (string, error) {
 	user, err := database.UserFindByEmail(input.Email)
 	if err != nil {
 		return "", err
@@ -53,7 +53,7 @@ func LoginService(input *models.LoginDTO) (string, error) {
 	return auth.SignJWT(&user)
 }
 
-func ListUsersService(users *[]models.User, includePosts bool) error {
+func UserList(users *[]models.User, includePosts bool) error {
 	err := database.UserList(users, includePosts)
 	if err != nil {
 		return err
@@ -70,8 +70,8 @@ func ListUsersService(users *[]models.User, includePosts bool) error {
 	return nil
 }
 
-func GetUserByIdService(user *models.User, id uint, includePosts bool) error {
-	err := database.UserFindById(user, id, includePosts)
+func UserGetById(user *models.User, id uint, includePosts bool) error {
+	err := database.UserGetById(user, id, includePosts)
 	if err != nil {
 		return err
 	}
@@ -89,6 +89,6 @@ func GetUserByIdService(user *models.User, id uint, includePosts bool) error {
 	return nil
 }
 
-func DeleteUserByIdService(id uint) error {
+func UserDeleteSelf(id uint) error {
 	return database.UserDeleteById(id)
 }

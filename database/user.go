@@ -42,7 +42,7 @@ func UserList(users *[]models.User, includePosts bool) error {
 	return db.Omit("Password").Find(users).Error
 }
 
-func UserFindById(user *models.User, id uint, includePosts bool) error {
+func UserGetById(user *models.User, id uint, includePosts bool) error {
 	if includePosts {
 		return db.Omit("Password").Preload("Posts").Find(user, id).Error
 	}

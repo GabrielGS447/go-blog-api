@@ -6,11 +6,11 @@ import (
 	"github.com/gabrielgaspar447/go-blog-api/models"
 )
 
-func CreatePostService(input *models.Post) error {
+func PostCreate(input *models.Post) error {
 	return database.PostCreate(input)
 }
 
-func ListPostsService(posts *[]models.Post, includeUser bool) error {
+func PostList(posts *[]models.Post, includeUser bool) error {
 	err := database.PostList(posts, includeUser)
 	if err != nil {
 		return err
@@ -28,7 +28,7 @@ func ListPostsService(posts *[]models.Post, includeUser bool) error {
 	return nil
 }
 
-func GetPostByIdService(post *models.Post, id uint, includeUser bool) error {
+func PostGetById(post *models.Post, id uint, includeUser bool) error {
 	err := database.PostGetById(post, id, includeUser)
 	if err != nil {
 		return err
@@ -48,7 +48,7 @@ func GetPostByIdService(post *models.Post, id uint, includeUser bool) error {
 	return nil
 }
 
-func SearchPostsService(posts *[]models.Post, query string, includeUser bool) error {
+func PostSearch(posts *[]models.Post, query string, includeUser bool) error {
 	err := database.PostSearch(posts, query, includeUser)
 	if err != nil {
 		return err
@@ -66,7 +66,7 @@ func SearchPostsService(posts *[]models.Post, query string, includeUser bool) er
 	return nil
 }
 
-func UpdatePostService(input *models.Post, userId uint) error {
+func PostUpdate(input *models.Post, userId uint) error {
 	post := &models.Post{}
 	err := database.PostGetById(post, input.ID, false)
 	if err != nil {
@@ -82,7 +82,7 @@ func UpdatePostService(input *models.Post, userId uint) error {
 	return database.PostUpdate(input, input.ID)
 }
 
-func DeletePostService(id uint, userId uint) error {
+func PostDelete(id uint, userId uint) error {
 	post := &models.Post{}
 	err := database.PostGetById(post, id, false)
 	if err != nil {
