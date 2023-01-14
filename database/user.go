@@ -30,24 +30,33 @@ func UserFindByEmail(email string) (*models.User, error) {
 }
 
 func UserCreate(input *models.User) error {
-	return db.Create(input).Error
+	return db.Omit("ID").Create(input).Error
 }
 
-func UserList(users *[]models.User, includePosts bool) error {
+func UserList(includePosts bool) (*[]models.User, error) {
+	users := make([]models.User, 0)
+	var err error
 
 	if includePosts {
-		return db.Omit("Password").Preload("Posts").Find(users).Error
+		err = db.Omit("Password").Preload("Posts").Find(&users).Error
+	} else {
+		err = db.Omit("Password").Find(&users).Error
 	}
 
-	return db.Omit("Password").Find(users).Error
+	return &users, err
 }
 
-func UserGetById(user *models.User, id uint, includePosts bool) error {
+func UserGetById(id uint, includePosts bool) (*models.User, error) {
+	user := &models.User{}
+	var err error
+
 	if includePosts {
-		return db.Omit("Password").Preload("Posts").Find(user, id).Error
+		err = db.Omit("Password").Preload("Posts").Find(user, id).Error
+	} else {
+		err = db.Omit("Password").Find(user, id).Error
 	}
 
-	return db.Omit("Password").Find(user, id).Error
+	return user, err
 }
 
 func UserDeleteById(id uint) error {

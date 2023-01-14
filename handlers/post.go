@@ -34,9 +34,7 @@ func PostCreate(c *gin.Context) {
 func PostList(c *gin.Context) {
 	includeUser := c.Query("user") == "true"
 
-	var posts []models.Post
-
-	err := services.PostList(&posts, includeUser)
+	posts, err := services.PostList(includeUser)
 
 	if err != nil {
 		handlePostErrors(c, err)
@@ -55,9 +53,7 @@ func PostGetById(c *gin.Context) {
 		return
 	}
 
-	var post models.Post
-
-	err = services.PostGetById(&post, uint(id), includeUser)
+	post, err := services.PostGetById(uint(id), includeUser)
 
 	if err != nil {
 		handlePostErrors(c, err)
@@ -71,9 +67,7 @@ func PostSearch(c *gin.Context) {
 	query := c.Query("q")
 	includeUser := c.Query("user") == "true"
 
-	var posts []models.Post
-
-	err := services.PostSearch(&posts, query, includeUser)
+	posts, err := services.PostSearch(query, includeUser)
 
 	if err != nil {
 		handlePostErrors(c, err)

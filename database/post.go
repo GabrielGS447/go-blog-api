@@ -27,28 +27,43 @@ func PostCreate(input *models.Post) error {
 	return db.Create(input).Error
 }
 
-func PostList(posts *[]models.Post, includeUser bool) error {
+func PostList(includeUser bool) (*[]models.Post, error) {
+	posts := make([]models.Post, 0)
+	var err error
+
 	if includeUser {
-		return db.Preload("User").Find(posts).Error
+		err = db.Preload("User").Find(&posts).Error
+	} else {
+		err = db.Find(&posts).Error
 	}
 
-	return db.Find(posts).Error
+	return &posts, err
 }
 
-func PostGetById(post *models.Post, id uint, includeUser bool) error {
+func PostGetById(id uint, includeUser bool) (*models.Post, error) {
+	post := &models.Post{}
+	var err error
+
 	if includeUser {
-		return db.Preload("User").Find(post, id).Error
+		err = db.Preload("User").Find(post, id).Error
+	} else {
+		err = db.Find(post, id).Error
 	}
 
-	return db.Find(post, id).Error
+	return post, err
 }
 
-func PostSearch(posts *[]models.Post, query string, includeUser bool) error {
+func PostSearch(query string, includeUser bool) (*[]models.Post, error) {
+	posts := make([]models.Post, 0)
+	var err error
+
 	if includeUser {
-		return db.Preload("User").Where("title LIKE ?", "%"+query+"%").Find(posts).Error
+		err = db.Preload("User").Where("title LIKE ?", "%"+query+"%").Find(&posts).Error
+	} else {
+		err = db.Where("title LIKE ?", "%"+query+"%").Find(&posts).Error
 	}
 
-	return db.Where("title LIKE ?", "%"+query+"%").Find(posts).Error
+	return &posts, err
 }
 
 func PostUpdate(input *models.Post, id uint) error {

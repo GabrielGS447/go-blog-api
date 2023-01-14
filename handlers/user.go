@@ -51,9 +51,7 @@ func UserLogin(c *gin.Context) {
 func UserList(c *gin.Context) {
 	includePosts := c.Query("posts") == "true"
 
-	var users []models.User
-
-	err := services.UserList(&users, includePosts)
+	users, err := services.UserList(includePosts)
 
 	if err != nil {
 		handleUserErrors(c, err)
@@ -72,9 +70,7 @@ func UserGetById(c *gin.Context) {
 		return
 	}
 
-	var user models.User
-
-	err = services.UserGetById(&user, uint(id), includePosts)
+	user, err := services.UserGetById(uint(id), includePosts)
 
 	if err != nil {
 		handleUserErrors(c, err)

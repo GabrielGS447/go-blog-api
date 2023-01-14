@@ -10,10 +10,10 @@ func PostCreate(input *models.Post) error {
 	return database.PostCreate(input)
 }
 
-func PostList(posts *[]models.Post, includeUser bool) error {
-	err := database.PostList(posts, includeUser)
+func PostList(includeUser bool) (*[]models.Post, error) {
+	posts, err := database.PostList(includeUser)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if includeUser {
@@ -25,17 +25,17 @@ func PostList(posts *[]models.Post, includeUser bool) error {
 		}
 	}
 
-	return nil
+	return posts, nil
 }
 
-func PostGetById(post *models.Post, id uint, includeUser bool) error {
-	err := database.PostGetById(post, id, includeUser)
+func PostGetById(id uint, includeUser bool) (*models.Post, error) {
+	post, err := database.PostGetById(id, includeUser)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if post.ID == 0 {
-		return errs.ErrPostNotFound
+		return nil, errs.ErrPostNotFound
 	}
 
 	if includeUser {
@@ -45,13 +45,13 @@ func PostGetById(post *models.Post, id uint, includeUser bool) error {
 		post.User.UpdatedAt = nil
 	}
 
-	return nil
+	return post, nil
 }
 
-func PostSearch(posts *[]models.Post, query string, includeUser bool) error {
-	err := database.PostSearch(posts, query, includeUser)
+func PostSearch(query string, includeUser bool) (*[]models.Post, error) {
+	posts, err := database.PostSearch(query, includeUser)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if includeUser {
@@ -63,12 +63,11 @@ func PostSearch(posts *[]models.Post, query string, includeUser bool) error {
 		}
 	}
 
-	return nil
+	return posts, nil
 }
 
 func PostUpdate(input *models.Post, userId uint) error {
-	post := &models.Post{}
-	err := database.PostGetById(post, input.ID, false)
+	post, err := database.PostGetById(input.ID, false)
 	if err != nil {
 		return err
 	}
@@ -83,8 +82,7 @@ func PostUpdate(input *models.Post, userId uint) error {
 }
 
 func PostDelete(id uint, userId uint) error {
-	post := &models.Post{}
-	err := database.PostGetById(post, id, false)
+	post, err := database.PostGetById(id, false)
 	if err != nil {
 		return err
 	}

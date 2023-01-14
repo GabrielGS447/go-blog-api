@@ -53,10 +53,10 @@ func UserLogin(input *models.LoginDTO) (string, error) {
 	return auth.SignJWT(user.ID)
 }
 
-func UserList(users *[]models.User, includePosts bool) error {
-	err := database.UserList(users, includePosts)
+func UserList(includePosts bool) (*[]models.User, error) {
+	users, err := database.UserList(includePosts)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if includePosts {
@@ -67,17 +67,17 @@ func UserList(users *[]models.User, includePosts bool) error {
 		}
 	}
 
-	return nil
+	return users, nil
 }
 
-func UserGetById(user *models.User, id uint, includePosts bool) error {
-	err := database.UserGetById(user, id, includePosts)
+func UserGetById(id uint, includePosts bool) (*models.User, error) {
+	user, err := database.UserGetById(id, includePosts)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if user.ID == 0 {
-		return errs.ErrUserNotFound
+		return nil, errs.ErrUserNotFound
 	}
 
 	if includePosts {
@@ -86,7 +86,7 @@ func UserGetById(user *models.User, id uint, includePosts bool) error {
 		}
 	}
 
-	return nil
+	return user, nil
 }
 
 func UserDeleteSelf(id uint) error {
