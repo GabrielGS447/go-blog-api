@@ -32,8 +32,6 @@ func UserSignup(ctx context.Context, input *models.User) (string, error) {
 		return "", err
 	}
 
-	input.Password = "" // Clear password just in case
-
 	return auth.SignJWT(input.Id)
 }
 
@@ -61,12 +59,8 @@ func UserList(ctx context.Context, includePosts bool) (*[]models.User, error) {
 		return nil, err
 	}
 
-	if includePosts {
-		for i := range *users {
-			for j := range (*users)[i].Posts {
-				(*users)[i].Posts[j].UserId = 0
-			}
-		}
+	for _, user := range *users {
+		user.SanitizeToJson()
 	}
 
 	return users, nil
@@ -82,11 +76,7 @@ func UserGetById(ctx context.Context, id uint, includePosts bool) (*models.User,
 		return nil, errs.ErrUserNotFound
 	}
 
-	if includePosts {
-		for i := range user.Posts {
-			user.Posts[i].UserId = 0
-		}
-	}
+	user.SanitizeToJson()
 
 	return user, nil
 }

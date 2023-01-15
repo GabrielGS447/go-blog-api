@@ -18,13 +18,8 @@ func PostList(ctx context.Context, includeUser bool) (*[]models.Post, error) {
 		return nil, err
 	}
 
-	if includeUser {
-		for i := range *posts {
-			(*posts)[i].User.Password = ""
-			(*posts)[i].User.Id = 0
-			(*posts)[i].User.CreatedAt = nil
-			(*posts)[i].User.UpdatedAt = nil
-		}
+	for _, post := range *posts {
+		post.SanitizeToJson()
 	}
 
 	return posts, nil
@@ -40,12 +35,7 @@ func PostGetById(ctx context.Context, id uint, includeUser bool) (*models.Post, 
 		return nil, errs.ErrPostNotFound
 	}
 
-	if includeUser {
-		post.User.Password = ""
-		post.User.Id = 0
-		post.User.CreatedAt = nil
-		post.User.UpdatedAt = nil
-	}
+	post.SanitizeToJson()
 
 	return post, nil
 }
@@ -56,13 +46,8 @@ func PostSearch(ctx context.Context, query string, includeUser bool) (*[]models.
 		return nil, err
 	}
 
-	if includeUser {
-		for i := range *posts {
-			(*posts)[i].User.Password = ""
-			(*posts)[i].User.Id = 0
-			(*posts)[i].User.CreatedAt = nil
-			(*posts)[i].User.UpdatedAt = nil
-		}
+	for _, post := range *posts {
+		post.SanitizeToJson()
 	}
 
 	return posts, nil

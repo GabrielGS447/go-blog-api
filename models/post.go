@@ -11,3 +11,12 @@ type Post struct {
 	UserId    uint       `json:"user_id,omitempty" gorm:"not null" binding:"isdefault"`
 	User      *User      `json:"user,omitempty" gorm:"foreignKey:UserId"`
 }
+
+func (p *Post) SanitizeToJson() {
+	if p.User != nil {
+		p.User.SanitizeToJson()
+		p.User.Id = 0
+		p.User.CreatedAt = nil
+		p.User.UpdatedAt = nil
+	}
+}

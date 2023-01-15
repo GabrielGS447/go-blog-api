@@ -14,6 +14,16 @@ type User struct {
 	Posts       []Post     `json:"posts,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" binding:"isdefault"`
 }
 
+func (u *User) SanitizeToJson() {
+	u.Password = ""
+
+	if u.Posts != nil {
+		for j := range u.Posts {
+			u.Posts[j].UserId = 0
+		}
+	}
+}
+
 type LoginDTO struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=6"`
