@@ -2,6 +2,7 @@ package app
 
 import (
 	"errors"
+	"net/http"
 	"os"
 
 	"github.com/gabrielgaspar447/go-blog-api/database"
@@ -10,7 +11,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func Setup() (*gin.Engine, error) {
+func Setup() (*http.Server, error) {
 	if err := loadENV(); err != nil {
 		return nil, err
 	}
@@ -19,12 +20,12 @@ func Setup() (*gin.Engine, error) {
 		return nil, err
 	}
 
-	app, err := prepareServer()
+	server, err := createServer()
 	if err != nil {
 		return nil, err
 	}
 
-	return app, nil
+	return server, nil
 }
 
 func loadENV() error {
@@ -51,10 +52,21 @@ func connectToDatabase() error {
 	}
 }
 
-func prepareServer() (*gin.Engine, error) {
-	app := gin.Default()
-	routers.LoadUserRoutes(app)
-	routers.LoadPostRoutes(app)
+func createServer() (*http.Server, error) {
+	router := gin.Default()
+	routers.LoadUserRoutes(router)
+	routers.LoadPostRoutes(router)
 
-	return app, nil
+	port := os.Getenv("PORT")
+	if port == "" {
+		return nil, errors.New("PORT not set")
+	}
+
+	// This wrapper allow us to gracefully shutdown the server
+	server := &http.Server{
+		Addr:    ":" + port,
+		Handler: router,
+	}
+
+	return server, nil
 }

@@ -11,25 +11,14 @@ import (
 )
 
 func main() {
-	router, err := app.Setup()
+	server, err := app.Setup()
 	if err != nil {
 		panic(err)
 	}
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "3000"
-	}
-
-	// This wrapper allow us to gracefully shutdown the server
-	server := &http.Server{
-		Addr:    ":" + port,
-		Handler: router,
-	}
-
 	go start(server)
 
-	fmt.Println("Application started on port " + port)
+	fmt.Println("Application started on port " + server.Addr)
 
 	waitForShutdownSignal()
 
