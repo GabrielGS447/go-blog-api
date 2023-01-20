@@ -28,6 +28,11 @@ func Connect(url string, reset bool) error {
 	return nil
 }
 
+func Disconnect() {
+	sqlDB, _ := db.DB()
+	sqlDB.Close()
+}
+
 func resetDB() {
 	db.Migrator().DropTable(&models.User{}, &models.Post{})
 	db.AutoMigrate(&models.User{}, &models.Post{})
