@@ -7,7 +7,11 @@ services:
       mysql:
         condition: service_healthy
     ports:
-      - "8080:8080"
+      - "8080:56988"
+    restart: 'always'
+    environment:
+      - MYSQL_URL=root:password@tcp(mysql)/go-blog-api?charset=utf8mb4&parseTime=True&loc=Local
+      - JWT_SECRET=secret
 
   mysql:
     image: mysql:8
