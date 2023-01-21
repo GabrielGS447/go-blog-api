@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/gabrielgaspar447/go-blog-api/errs"
+	"github.com/gabrielgs447/go-blog-api/errs"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 )

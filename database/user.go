@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/gabrielgaspar447/go-blog-api/models"
+	"github.com/gabrielgs447/go-blog-api/models"
 )
 
 func seedUsers() {

@@ -3,9 +3,9 @@ package services
 import (
 	"context"
 
-	"github.com/gabrielgaspar447/go-blog-api/database"
-	"github.com/gabrielgaspar447/go-blog-api/errs"
-	"github.com/gabrielgaspar447/go-blog-api/models"
+	"github.com/gabrielgs447/go-blog-api/database"
+	"github.com/gabrielgs447/go-blog-api/errs"
+	"github.com/gabrielgs447/go-blog-api/models"
 )
 
 type PostServiceInterface interface {

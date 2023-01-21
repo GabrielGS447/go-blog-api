@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gabrielgaspar447/go-blog-api/database"
+	"github.com/gabrielgs447/go-blog-api/database"
 )
 
 func Teardown(server *http.Server) {

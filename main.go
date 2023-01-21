@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/gabrielgaspar447/go-blog-api/app"
+	"github.com/gabrielgs447/go-blog-api/app"
 )
 
 func main() {

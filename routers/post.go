@@ -1,10 +1,10 @@
 package routers
 
 import (
-	"github.com/gabrielgaspar447/go-blog-api/auth"
-	"github.com/gabrielgaspar447/go-blog-api/database"
-	"github.com/gabrielgaspar447/go-blog-api/handlers"
-	"github.com/gabrielgaspar447/go-blog-api/services"
+	"github.com/gabrielgs447/go-blog-api/auth"
+	"github.com/gabrielgs447/go-blog-api/database"
+	"github.com/gabrielgs447/go-blog-api/handlers"
+	"github.com/gabrielgs447/go-blog-api/services"
 	"github.com/gin-gonic/gin"
 )
 

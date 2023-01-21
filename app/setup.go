@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gabrielgaspar447/go-blog-api/database"
-	"github.com/gabrielgaspar447/go-blog-api/routers"
+	"github.com/gabrielgs447/go-blog-api/database"
+	"github.com/gabrielgs447/go-blog-api/routers"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )

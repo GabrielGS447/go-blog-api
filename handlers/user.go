@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gabrielgaspar447/go-blog-api/errs"
-	"github.com/gabrielgaspar447/go-blog-api/models"
-	"github.com/gabrielgaspar447/go-blog-api/services"
-	"github.com/gabrielgaspar447/go-blog-api/utils"
+	"github.com/gabrielgs447/go-blog-api/errs"
+	"github.com/gabrielgs447/go-blog-api/models"
+	"github.com/gabrielgs447/go-blog-api/services"
+	"github.com/gabrielgs447/go-blog-api/utils"
 	"github.com/gin-gonic/gin"
 )
 
