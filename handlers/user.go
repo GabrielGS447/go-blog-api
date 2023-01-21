@@ -84,7 +84,7 @@ func (h *userHandler) GetById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": errs.ErrInvalidId})
+		handleUsersErrors(c, errs.ErrInvalidId)
 		return
 	}
 
@@ -121,6 +121,8 @@ func handleUsersErrors(c *gin.Context, err error) {
 	case errs.ErrUserAlreadyExists:
 		c.JSON(http.StatusConflict, gin.H{"error": errs.ErrUserAlreadyExists.Error()})
 		return
+	case errs.ErrInvalidId:
+		c.JSON(http.StatusBadRequest, gin.H{"error": errs.ErrInvalidId.Error()})
 	case errs.ErrUserNotFound:
 		c.JSON(http.StatusNotFound, gin.H{"error": errs.ErrUserNotFound.Error()})
 		return

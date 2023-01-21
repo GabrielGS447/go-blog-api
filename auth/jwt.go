@@ -34,7 +34,7 @@ func verifyJWT(tokenString string) (uint, error) {
 	})
 
 	if err != nil {
-		return 0, err
+		return 0, errs.ErrInvalidToken
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
@@ -49,7 +49,7 @@ func AuthHandler(c *gin.Context) {
 	token := c.GetHeader("Authorization")
 
 	if tokenLen := len(token); tokenLen < 7 || token[:7] != "Bearer " {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": errs.ErrMissingToken})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errs.ErrMissingToken.Error()})
 		c.Abort()
 		return
 	}
@@ -57,7 +57,7 @@ func AuthHandler(c *gin.Context) {
 	userId, err := verifyJWT(token[7:])
 
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": errs.ErrInvalidToken})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		c.Abort()
 		return
 	}

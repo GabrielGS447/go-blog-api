@@ -68,7 +68,7 @@ func (h *postHandler) GetById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": errs.ErrInvalidId})
+		handlePostsErrors(c, errs.ErrInvalidId)
 		return
 	}
 
@@ -108,7 +108,7 @@ func (h *postHandler) Update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": errs.ErrInvalidId})
+		handlePostsErrors(c, errs.ErrInvalidId)
 		return
 	}
 
@@ -129,7 +129,7 @@ func (h *postHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": errs.ErrInvalidId})
+		handlePostsErrors(c, errs.ErrInvalidId)
 		return
 	}
 
@@ -150,6 +150,8 @@ func handlePostsErrors(c *gin.Context, err error) {
 	}
 
 	switch err {
+	case errs.ErrInvalidId:
+		c.JSON(http.StatusBadRequest, gin.H{"error": errs.ErrInvalidId.Error()})
 	case errs.ErrPostNotFound:
 		c.JSON(http.StatusNotFound, gin.H{"error": errs.ErrPostNotFound.Error()})
 		return
