@@ -2,17 +2,25 @@ package routers
 
 import (
 	"github.com/gabrielgaspar447/go-blog-api/auth"
+	"github.com/gabrielgaspar447/go-blog-api/database"
 	"github.com/gabrielgaspar447/go-blog-api/handlers"
+	"github.com/gabrielgaspar447/go-blog-api/services"
 	"github.com/gin-gonic/gin"
 )
 
 func LoadPostRoutes(app *gin.Engine) {
+	handler := makePostHandler()
 	post := app.Group("/post")
+	post.POST("/create", auth.AuthHandler, handler.Create)
+	post.GET("/list", handler.List)
+	post.GET("/search", handler.Search)
+	post.GET("/:id", handler.GetById)
+	post.PUT("/:id", auth.AuthHandler, handler.Update)
+	post.DELETE("/:id", auth.AuthHandler, handler.Delete)
+}
 
-	post.POST("/create", auth.AuthHandler, handlers.PostCreate)
-	post.GET("/list", handlers.PostList)
-	post.GET("/search", handlers.PostSearch)
-	post.GET("/:id", handlers.PostGetById)
-	post.PUT("/:id", auth.AuthHandler, handlers.PostUpdate)
-	post.DELETE("/:id", auth.AuthHandler, handlers.PostDelete)
+func makePostHandler() handlers.PostHandlerInterface {
+	repository := database.NewPostRepository()
+	service := services.NewPostService(repository)
+	return handlers.NewPostHandler(service)
 }

@@ -26,14 +26,29 @@ func seedPosts() {
 	db.Create(&data)
 }
 
-func PostCreate(ctx context.Context, input *models.Post) error {
+type PostRepositoryInterface interface {
+	Create(ctx context.Context, input *models.Post) error
+	List(ctx context.Context, includeUser bool) (*[]models.Post, error)
+	GetById(ctx context.Context, id uint, includeUser bool) (*models.Post, error)
+	Search(ctx context.Context, query string, includeUser bool) (*[]models.Post, error)
+	Update(ctx context.Context, input *models.Post, id uint) error
+	Delete(ctx context.Context, id uint) error
+}
+
+type postRepository struct{}
+
+func NewPostRepository() PostRepositoryInterface {
+	return &postRepository{}
+}
+
+func (r *postRepository) Create(ctx context.Context, input *models.Post) error {
 	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	return db.WithContext(timeoutCtx).Create(input).Error
 }
 
-func PostList(ctx context.Context, includeUser bool) (*[]models.Post, error) {
+func (r *postRepository) List(ctx context.Context, includeUser bool) (*[]models.Post, error) {
 	posts := make([]models.Post, 0)
 	var err error
 
@@ -49,7 +64,7 @@ func PostList(ctx context.Context, includeUser bool) (*[]models.Post, error) {
 	return &posts, err
 }
 
-func PostGetById(ctx context.Context, id uint, includeUser bool) (*models.Post, error) {
+func (r *postRepository) GetById(ctx context.Context, id uint, includeUser bool) (*models.Post, error) {
 	post := &models.Post{}
 	var err error
 
@@ -65,7 +80,7 @@ func PostGetById(ctx context.Context, id uint, includeUser bool) (*models.Post, 
 	return post, err
 }
 
-func PostSearch(ctx context.Context, query string, includeUser bool) (*[]models.Post, error) {
+func (r *postRepository) Search(ctx context.Context, query string, includeUser bool) (*[]models.Post, error) {
 	posts := make([]models.Post, 0)
 	var err error
 
@@ -81,14 +96,14 @@ func PostSearch(ctx context.Context, query string, includeUser bool) (*[]models.
 	return &posts, err
 }
 
-func PostUpdate(ctx context.Context, input *models.Post, id uint) error {
+func (r *postRepository) Update(ctx context.Context, input *models.Post, id uint) error {
 	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	return db.WithContext(timeoutCtx).Model(&models.Post{}).Where("id = ?", id).Updates(input).Error
 }
 
-func PostDelete(ctx context.Context, id uint) error {
+func (r *postRepository) Delete(ctx context.Context, id uint) error {
 	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 

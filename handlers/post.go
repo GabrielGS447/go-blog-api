@@ -11,40 +11,59 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func PostCreate(c *gin.Context) {
+type PostHandlerInterface interface {
+	Create(c *gin.Context)
+	List(c *gin.Context)
+	GetById(c *gin.Context)
+	Search(c *gin.Context)
+	Update(c *gin.Context)
+	Delete(c *gin.Context)
+}
+
+type postHandler struct {
+	postService services.PostServiceInterface
+}
+
+func NewPostHandler(s services.PostServiceInterface) PostHandlerInterface {
+	return &postHandler{
+		s,
+	}
+}
+
+func (h *postHandler) Create(c *gin.Context) {
 	var input models.Post
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		handlePostErrors(c, err)
+		handlePostsErrors(c, err)
 		return
 	}
 
 	input.UserId = c.GetUint("userId")
 
-	err := services.PostCreate(c.Request.Context(), &input)
+	err := h.postService.Create(c.Request.Context(), &input)
 
 	if err != nil {
-		handlePostErrors(c, err)
+		handlePostsErrors(c, err)
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"data": input})
 }
 
-func PostList(c *gin.Context) {
+func (h *postHandler) List(c *gin.Context) {
 	includeUser := c.Query("user") == "true"
 
-	posts, err := services.PostList(c.Request.Context(), includeUser)
+	posts, err := h.postService.List(c.Request.Context(), includeUser)
 
 	if err != nil {
-		handlePostErrors(c, err)
+		handlePostsErrors(c, err)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": posts})
 }
 
-func PostGetById(c *gin.Context) {
+func (h *postHandler) GetById(c *gin.Context) {
 	includeUser := c.Query("user") == "true"
 	id, err := strconv.Atoi(c.Param("id"))
 
@@ -53,36 +72,36 @@ func PostGetById(c *gin.Context) {
 		return
 	}
 
-	post, err := services.PostGetById(c.Request.Context(), uint(id), includeUser)
+	post, err := h.postService.GetById(c.Request.Context(), uint(id), includeUser)
 
 	if err != nil {
-		handlePostErrors(c, err)
+		handlePostsErrors(c, err)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": post})
 }
 
-func PostSearch(c *gin.Context) {
+func (h *postHandler) Search(c *gin.Context) {
 	query := c.Query("q")
 	includeUser := c.Query("user") == "true"
 
-	posts, err := services.PostSearch(c.Request.Context(), query, includeUser)
+	posts, err := h.postService.Search(c.Request.Context(), query, includeUser)
 
 	if err != nil {
-		handlePostErrors(c, err)
+		handlePostsErrors(c, err)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": posts})
 }
 
-func PostUpdate(c *gin.Context) {
+func (h *postHandler) Update(c *gin.Context) {
 	var input models.Post
 	userId := c.GetUint("userId")
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		handlePostErrors(c, err)
+		handlePostsErrors(c, err)
 		return
 	}
 
@@ -95,17 +114,17 @@ func PostUpdate(c *gin.Context) {
 
 	input.Id = uint(id)
 
-	err = services.PostUpdate(c.Request.Context(), &input, userId)
+	err = h.postService.Update(c.Request.Context(), &input, userId)
 
 	if err != nil {
-		handlePostErrors(c, err)
+		handlePostsErrors(c, err)
 		return
 	}
 
 	c.Status(http.StatusNoContent)
 }
 
-func PostDelete(c *gin.Context) {
+func (h *postHandler) Delete(c *gin.Context) {
 	userId := c.GetUint("userId")
 	id, err := strconv.Atoi(c.Param("id"))
 
@@ -114,17 +133,17 @@ func PostDelete(c *gin.Context) {
 		return
 	}
 
-	err = services.PostDelete(c.Request.Context(), uint(id), userId)
+	err = h.postService.Delete(c.Request.Context(), uint(id), userId)
 
 	if err != nil {
-		handlePostErrors(c, err)
+		handlePostsErrors(c, err)
 		return
 	}
 
 	c.Status(http.StatusNoContent)
 }
 
-func handlePostErrors(c *gin.Context, err error) {
+func handlePostsErrors(c *gin.Context, err error) {
 	if valErrs := utils.GetValidationErrors(err); valErrs != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": valErrs})
 		return

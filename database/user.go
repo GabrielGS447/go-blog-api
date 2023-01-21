@@ -26,7 +26,21 @@ func seedUsers() {
 	db.Create(&data)
 }
 
-func UserFindByEmail(ctx context.Context, email string) (*models.User, error) {
+type UserRepositoryInterface interface {
+	FindByEmail(ctx context.Context, email string) (*models.User, error)
+	Create(ctx context.Context, input *models.User) error
+	List(ctx context.Context, includePosts bool) (*[]models.User, error)
+	GetById(ctx context.Context, id uint, includePosts bool) (*models.User, error)
+	DeleteById(ctx context.Context, id uint) error
+}
+
+type userRepository struct{}
+
+func NewUserRepository() UserRepositoryInterface {
+	return &userRepository{}
+}
+
+func (r *userRepository) FindByEmail(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
 
 	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
@@ -36,14 +50,14 @@ func UserFindByEmail(ctx context.Context, email string) (*models.User, error) {
 	return &user, err
 }
 
-func UserCreate(ctx context.Context, input *models.User) error {
+func (r *userRepository) Create(ctx context.Context, input *models.User) error {
 	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	return db.WithContext(timeoutCtx).Omit("Id").Create(input).Error
 }
 
-func UserList(ctx context.Context, includePosts bool) (*[]models.User, error) {
+func (r *userRepository) List(ctx context.Context, includePosts bool) (*[]models.User, error) {
 	users := make([]models.User, 0)
 	var err error
 
@@ -59,7 +73,7 @@ func UserList(ctx context.Context, includePosts bool) (*[]models.User, error) {
 	return &users, err
 }
 
-func UserGetById(ctx context.Context, id uint, includePosts bool) (*models.User, error) {
+func (r *userRepository) GetById(ctx context.Context, id uint, includePosts bool) (*models.User, error) {
 	user := &models.User{}
 	var err error
 
@@ -75,7 +89,7 @@ func UserGetById(ctx context.Context, id uint, includePosts bool) (*models.User,
 	return user, err
 }
 
-func UserDeleteById(ctx context.Context, id uint) error {
+func (r *userRepository) DeleteById(ctx context.Context, id uint) error {
 	timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 

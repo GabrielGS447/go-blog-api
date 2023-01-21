@@ -12,56 +12,74 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UserSignup(c *gin.Context) {
+type UserHandlerInterface interface {
+	Signup(c *gin.Context)
+	Login(c *gin.Context)
+	List(c *gin.Context)
+	GetById(c *gin.Context)
+	DeleteSelf(c *gin.Context)
+}
+
+type userHandler struct {
+	userService services.UserServiceInterface
+}
+
+func NewUserHandler(s services.UserServiceInterface) UserHandlerInterface {
+	return &userHandler{
+		s,
+	}
+}
+
+func (h *userHandler) Signup(c *gin.Context) {
 	var input models.User
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		handleUserErrors(c, err)
+		handleUsersErrors(c, err)
 		return
 	}
 
-	token, err := services.UserSignup(c.Request.Context(), &input)
+	token, err := h.userService.Signup(c.Request.Context(), &input)
 
 	if err != nil {
-		handleUserErrors(c, err)
+		handleUsersErrors(c, err)
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"data": token})
 }
 
-func UserLogin(c *gin.Context) {
+func (h *userHandler) Login(c *gin.Context) {
 	var input models.LoginDTO
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		handleUserErrors(c, err)
+		handleUsersErrors(c, err)
 		return
 	}
 
-	token, err := services.UserLogin(c.Request.Context(), &input)
+	token, err := h.userService.Login(c.Request.Context(), &input)
 
 	if err != nil {
-		handleUserErrors(c, err)
+		handleUsersErrors(c, err)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": token})
 }
 
-func UserList(c *gin.Context) {
+func (h *userHandler) List(c *gin.Context) {
 	includePosts := c.Query("posts") == "true"
 
-	users, err := services.UserList(c.Request.Context(), includePosts)
+	users, err := h.userService.List(c.Request.Context(), includePosts)
 
 	if err != nil {
-		handleUserErrors(c, err)
+		handleUsersErrors(c, err)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": users})
 }
 
-func UserGetById(c *gin.Context) {
+func (h *userHandler) GetById(c *gin.Context) {
 	includePosts := c.Query("posts") == "true"
 	id, err := strconv.Atoi(c.Param("id"))
 
@@ -70,30 +88,30 @@ func UserGetById(c *gin.Context) {
 		return
 	}
 
-	user, err := services.UserGetById(c.Request.Context(), uint(id), includePosts)
+	user, err := h.userService.GetById(c.Request.Context(), uint(id), includePosts)
 
 	if err != nil {
-		handleUserErrors(c, err)
+		handleUsersErrors(c, err)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
-func UserDeleteSelf(c *gin.Context) {
+func (h *userHandler) DeleteSelf(c *gin.Context) {
 	id := c.GetUint("userId")
 
-	err := services.UserDeleteSelf(c.Request.Context(), id)
+	err := h.userService.DeleteSelf(c.Request.Context(), id)
 
 	if err != nil {
-		handleUserErrors(c, err)
+		handleUsersErrors(c, err)
 		return
 	}
 
 	c.Status(http.StatusNoContent)
 }
 
-func handleUserErrors(c *gin.Context, err error) {
+func handleUsersErrors(c *gin.Context, err error) {
 	if valErrs := utils.GetValidationErrors(err); valErrs != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": valErrs})
 		return

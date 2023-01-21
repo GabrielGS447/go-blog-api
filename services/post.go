@@ -8,12 +8,31 @@ import (
 	"github.com/gabrielgaspar447/go-blog-api/models"
 )
 
-func PostCreate(ctx context.Context, input *models.Post) error {
-	return database.PostCreate(ctx, input)
+type PostServiceInterface interface {
+	Create(ctx context.Context, input *models.Post) error
+	List(ctx context.Context, includeUser bool) (*[]models.Post, error)
+	GetById(ctx context.Context, id uint, includeUser bool) (*models.Post, error)
+	Search(ctx context.Context, query string, includeUser bool) (*[]models.Post, error)
+	Update(ctx context.Context, input *models.Post, userId uint) error
+	Delete(ctx context.Context, id uint, userId uint) error
 }
 
-func PostList(ctx context.Context, includeUser bool) (*[]models.Post, error) {
-	posts, err := database.PostList(ctx, includeUser)
+type postService struct {
+	postRepository database.PostRepositoryInterface
+}
+
+func NewPostService(r database.PostRepositoryInterface) PostServiceInterface {
+	return &postService{
+		r,
+	}
+}
+
+func (s *postService) Create(ctx context.Context, input *models.Post) error {
+	return s.postRepository.Create(ctx, input)
+}
+
+func (s *postService) List(ctx context.Context, includeUser bool) (*[]models.Post, error) {
+	posts, err := s.postRepository.List(ctx, includeUser)
 	if err != nil {
 		return nil, err
 	}
@@ -25,8 +44,8 @@ func PostList(ctx context.Context, includeUser bool) (*[]models.Post, error) {
 	return posts, nil
 }
 
-func PostGetById(ctx context.Context, id uint, includeUser bool) (*models.Post, error) {
-	post, err := database.PostGetById(ctx, id, includeUser)
+func (s *postService) GetById(ctx context.Context, id uint, includeUser bool) (*models.Post, error) {
+	post, err := s.postRepository.GetById(ctx, id, includeUser)
 	if err != nil {
 		return nil, err
 	}
@@ -40,8 +59,8 @@ func PostGetById(ctx context.Context, id uint, includeUser bool) (*models.Post, 
 	return post, nil
 }
 
-func PostSearch(ctx context.Context, query string, includeUser bool) (*[]models.Post, error) {
-	posts, err := database.PostSearch(ctx, query, includeUser)
+func (s *postService) Search(ctx context.Context, query string, includeUser bool) (*[]models.Post, error) {
+	posts, err := s.postRepository.Search(ctx, query, includeUser)
 	if err != nil {
 		return nil, err
 	}
@@ -53,8 +72,8 @@ func PostSearch(ctx context.Context, query string, includeUser bool) (*[]models.
 	return posts, nil
 }
 
-func PostUpdate(ctx context.Context, input *models.Post, userId uint) error {
-	post, err := database.PostGetById(ctx, input.Id, false)
+func (s *postService) Update(ctx context.Context, input *models.Post, userId uint) error {
+	post, err := s.postRepository.GetById(ctx, input.Id, false)
 	if err != nil {
 		return err
 	}
@@ -65,11 +84,11 @@ func PostUpdate(ctx context.Context, input *models.Post, userId uint) error {
 		return errs.ErrPostNotOwned
 	}
 
-	return database.PostUpdate(ctx, input, input.Id)
+	return s.postRepository.Update(ctx, input, input.Id)
 }
 
-func PostDelete(ctx context.Context, id uint, userId uint) error {
-	post, err := database.PostGetById(ctx, id, false)
+func (s *postService) Delete(ctx context.Context, id uint, userId uint) error {
+	post, err := s.postRepository.GetById(ctx, id, false)
 	if err != nil {
 		return err
 	}
@@ -80,5 +99,5 @@ func PostDelete(ctx context.Context, id uint, userId uint) error {
 		return errs.ErrPostNotOwned
 	}
 
-	return database.PostDelete(ctx, id)
+	return s.postRepository.Delete(ctx, id)
 }

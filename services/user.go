@@ -10,8 +10,26 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func UserSignup(ctx context.Context, input *models.User) (string, error) {
-	user, err := database.UserFindByEmail(ctx, input.Email)
+type UserServiceInterface interface {
+	Signup(ctx context.Context, input *models.User) (string, error)
+	Login(ctx context.Context, input *models.LoginDTO) (string, error)
+	List(ctx context.Context, includePosts bool) (*[]models.User, error)
+	GetById(ctx context.Context, id uint, includePosts bool) (*models.User, error)
+	DeleteSelf(ctx context.Context, id uint) error
+}
+
+type userService struct {
+	userRepository database.UserRepositoryInterface
+}
+
+func NewUserService(r database.UserRepositoryInterface) UserServiceInterface {
+	return &userService{
+		r,
+	}
+}
+
+func (s *userService) Signup(ctx context.Context, input *models.User) (string, error) {
+	user, err := s.userRepository.FindByEmail(ctx, input.Email)
 	if err != nil {
 		return "", err
 	}
@@ -27,7 +45,7 @@ func UserSignup(ctx context.Context, input *models.User) (string, error) {
 
 	input.Password = string(hash)
 
-	err = database.UserCreate(ctx, input)
+	err = s.userRepository.Create(ctx, input)
 	if err != nil {
 		return "", err
 	}
@@ -35,8 +53,8 @@ func UserSignup(ctx context.Context, input *models.User) (string, error) {
 	return auth.SignJWT(input.Id)
 }
 
-func UserLogin(ctx context.Context, input *models.LoginDTO) (string, error) {
-	user, err := database.UserFindByEmail(ctx, input.Email)
+func (s *userService) Login(ctx context.Context, input *models.LoginDTO) (string, error) {
+	user, err := s.userRepository.FindByEmail(ctx, input.Email)
 	if err != nil {
 		return "", err
 	}
@@ -53,8 +71,8 @@ func UserLogin(ctx context.Context, input *models.LoginDTO) (string, error) {
 	return auth.SignJWT(user.Id)
 }
 
-func UserList(ctx context.Context, includePosts bool) (*[]models.User, error) {
-	users, err := database.UserList(ctx, includePosts)
+func (s *userService) List(ctx context.Context, includePosts bool) (*[]models.User, error) {
+	users, err := s.userRepository.List(ctx, includePosts)
 	if err != nil {
 		return nil, err
 	}
@@ -66,8 +84,8 @@ func UserList(ctx context.Context, includePosts bool) (*[]models.User, error) {
 	return users, nil
 }
 
-func UserGetById(ctx context.Context, id uint, includePosts bool) (*models.User, error) {
-	user, err := database.UserGetById(ctx, id, includePosts)
+func (s *userService) GetById(ctx context.Context, id uint, includePosts bool) (*models.User, error) {
+	user, err := s.userRepository.GetById(ctx, id, includePosts)
 	if err != nil {
 		return nil, err
 	}
@@ -81,6 +99,6 @@ func UserGetById(ctx context.Context, id uint, includePosts bool) (*models.User,
 	return user, nil
 }
 
-func UserDeleteSelf(ctx context.Context, id uint) error {
-	return database.UserDeleteById(ctx, id)
+func (s *userService) DeleteSelf(ctx context.Context, id uint) error {
+	return s.userRepository.DeleteById(ctx, id)
 }
