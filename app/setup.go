@@ -59,7 +59,7 @@ func createServer() (*http.Server, error) {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		return nil, errors.New("PORT not set")
+		port = "56988"
 	}
 
 	// This wrapper allow us to gracefully shutdown the server

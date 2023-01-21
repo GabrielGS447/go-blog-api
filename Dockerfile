@@ -23,7 +23,6 @@ EXPOSE 8080
 USER nonroot:nonroot
 
 ENV GO_ENV=production \
-PORT=8080 \
 MYSQL_URL=root:password@tcp(mysql)/go-blog-api?charset=utf8mb4&parseTime=True&loc=Local \
 JWT_SECRET=secret \
 RESET_DB=false
