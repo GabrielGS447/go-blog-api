@@ -18,7 +18,7 @@ WORKDIR /
 
 COPY --from=build /go-blog-api /go-blog-api
 
-EXPOSE 8080
+EXPOSE 56988
 
 USER nonroot:nonroot
 
