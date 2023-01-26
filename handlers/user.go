@@ -31,14 +31,14 @@ func NewUserHandler(s services.UserServiceInterface) UserHandlerInterface {
 }
 
 func (h *userHandler) Signup(c *gin.Context) {
-	var input models.User
+	var input models.CreateUserDTO
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		handleUsersErrors(c, err)
 		return
 	}
 
-	token, err := h.userService.Signup(c.Request.Context(), &input)
+	token, err := h.userService.Signup(c.Request.Context(), input.ToModel())
 
 	if err != nil {
 		handleUsersErrors(c, err)

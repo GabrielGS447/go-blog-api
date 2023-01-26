@@ -13,8 +13,8 @@ type PostServiceInterface interface {
 	List(ctx context.Context, includeUser bool) (*[]models.Post, error)
 	GetById(ctx context.Context, id uint, includeUser bool) (*models.Post, error)
 	Search(ctx context.Context, query string, includeUser bool) (*[]models.Post, error)
-	Update(ctx context.Context, input *models.Post, userId uint) error
-	Delete(ctx context.Context, id uint, userId uint) error
+	Update(ctx context.Context, input *models.Post, postId, userId uint) error
+	Delete(ctx context.Context, id, userId uint) error
 }
 
 type postService struct {
@@ -72,8 +72,8 @@ func (s *postService) Search(ctx context.Context, query string, includeUser bool
 	return posts, nil
 }
 
-func (s *postService) Update(ctx context.Context, input *models.Post, userId uint) error {
-	post, err := s.postRepository.GetById(ctx, input.Id, false)
+func (s *postService) Update(ctx context.Context, input *models.Post, postId, userId uint) error {
+	post, err := s.postRepository.GetById(ctx, postId, false)
 	if err != nil {
 		return err
 	}
@@ -84,10 +84,10 @@ func (s *postService) Update(ctx context.Context, input *models.Post, userId uin
 		return errs.ErrPostNotOwned
 	}
 
-	return s.postRepository.Update(ctx, input, input.Id)
+	return s.postRepository.Update(ctx, input, postId)
 }
 
-func (s *postService) Delete(ctx context.Context, id uint, userId uint) error {
+func (s *postService) Delete(ctx context.Context, id, userId uint) error {
 	post, err := s.postRepository.GetById(ctx, id, false)
 	if err != nil {
 		return err

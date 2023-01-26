@@ -15,7 +15,7 @@ func LoadPostRoutes(app *gin.Engine) {
 	post.GET("/list", handler.List)
 	post.GET("/search", handler.Search)
 	post.GET("/:id", handler.GetById)
-	post.PUT("/:id", auth.AuthHandler, handler.Update)
+	post.PATCH("/:id", auth.AuthHandler, handler.Update)
 	post.DELETE("/:id", auth.AuthHandler, handler.Delete)
 }
 

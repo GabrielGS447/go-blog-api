@@ -31,16 +31,16 @@ func NewPostHandler(s services.PostServiceInterface) PostHandlerInterface {
 }
 
 func (h *postHandler) Create(c *gin.Context) {
-	var input models.Post
+	var input models.CreatePostDTO
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		handlePostsErrors(c, err)
 		return
 	}
 
-	input.UserId = c.GetUint("userId")
+	userId := c.GetUint("userId")
 
-	err := h.postService.Create(c.Request.Context(), &input)
+	err := h.postService.Create(c.Request.Context(), input.ToModel(userId))
 
 	if err != nil {
 		handlePostsErrors(c, err)
@@ -97,7 +97,7 @@ func (h *postHandler) Search(c *gin.Context) {
 }
 
 func (h *postHandler) Update(c *gin.Context) {
-	var input models.Post
+	var input models.UpdatePostDTO
 	userId := c.GetUint("userId")
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -105,16 +105,14 @@ func (h *postHandler) Update(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
+	postId, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
 		handlePostsErrors(c, errs.ErrInvalidId)
 		return
 	}
 
-	input.Id = uint(id)
-
-	err = h.postService.Update(c.Request.Context(), &input, userId)
+	err = h.postService.Update(c.Request.Context(), input.ToModel(), uint(postId), userId)
 
 	if err != nil {
 		handlePostsErrors(c, err)
