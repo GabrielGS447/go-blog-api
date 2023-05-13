@@ -126,9 +126,9 @@ func handleUsersErrors(c *gin.Context, err error) {
 	case errs.ErrUserNotFound:
 		c.JSON(http.StatusNotFound, gin.H{"error": errs.ErrUserNotFound.Error()})
 		return
-	case errs.ErrInvalidPassword:
+	case errs.ErrInvalidCredentials:
 		fmt.Println("invalid password")
-		c.JSON(http.StatusUnauthorized, gin.H{"error": errs.ErrInvalidPassword.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errs.ErrInvalidCredentials.Error()})
 		return
 	default:
 		c.JSON(http.StatusInternalServerError, gin.H{"error": errs.ErrUnknown.Error()})

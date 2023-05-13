@@ -1,3 +1,4 @@
 .env
+.vscode
 go-blog-api
 tmp

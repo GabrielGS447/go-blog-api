@@ -59,13 +59,8 @@ func (s *userService) Login(ctx context.Context, input *models.LoginDTO) (string
 		return "", err
 	}
 
-	if user.Id == 0 {
-		return "", errs.ErrUserNotFound
-	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
-	if err != nil {
-		return "", errs.ErrInvalidPassword
+	if user.Id == 0 || bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)) != nil {
+		return "", errs.ErrInvalidCredentials
 	}
 
 	return auth.SignJWT(user.Id)
