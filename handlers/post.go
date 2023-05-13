@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -147,14 +148,14 @@ func handlePostsErrors(c *gin.Context, err error) {
 		return
 	}
 
-	switch err {
-	case errs.ErrInvalidId:
-		c.JSON(http.StatusBadRequest, gin.H{"error": errs.ErrInvalidId.Error()})
-	case errs.ErrPostNotFound:
-		c.JSON(http.StatusNotFound, gin.H{"error": errs.ErrPostNotFound.Error()})
+	switch {
+	case errors.Is(err, errs.ErrInvalidId):
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	case errors.Is(err, errs.ErrPostNotFound):
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
-	case errs.ErrPostNotOwned:
-		c.JSON(http.StatusForbidden, gin.H{"error": errs.ErrPostNotOwned.Error()})
+	case errors.Is(err, errs.ErrPostNotOwned):
+		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 		return
 	default:
 		c.JSON(http.StatusInternalServerError, gin.H{"error": errs.ErrUnknown.Error()})

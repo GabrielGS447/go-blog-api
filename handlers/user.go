@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -117,18 +117,17 @@ func handleUsersErrors(c *gin.Context, err error) {
 		return
 	}
 
-	switch err {
-	case errs.ErrUserAlreadyExists:
-		c.JSON(http.StatusConflict, gin.H{"error": errs.ErrUserAlreadyExists.Error()})
+	switch {
+	case errors.Is(err, errs.ErrUserAlreadyExists):
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
-	case errs.ErrInvalidId:
-		c.JSON(http.StatusBadRequest, gin.H{"error": errs.ErrInvalidId.Error()})
-	case errs.ErrUserNotFound:
-		c.JSON(http.StatusNotFound, gin.H{"error": errs.ErrUserNotFound.Error()})
+	case errors.Is(err, errs.ErrInvalidId):
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	case errors.Is(err, errs.ErrUserNotFound):
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
-	case errs.ErrInvalidCredentials:
-		fmt.Println("invalid password")
-		c.JSON(http.StatusUnauthorized, gin.H{"error": errs.ErrInvalidCredentials.Error()})
+	case errors.Is(err, errs.ErrInvalidCredentials):
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	default:
 		c.JSON(http.StatusInternalServerError, gin.H{"error": errs.ErrUnknown.Error()})
